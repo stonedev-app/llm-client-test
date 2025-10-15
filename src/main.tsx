@@ -1,5 +1,5 @@
 // CSS
-import "modern-normalize";
+import "./styles/global.css";
 
 // JavaScript
 import React from "react";

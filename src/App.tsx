@@ -1,7 +1,7 @@
 export const App = () => {
   return (
     <>
-      <p>App.tsx</p>
+      <h1 className="text-gray-400">Hello world!</h1>
     </>
   );
 };

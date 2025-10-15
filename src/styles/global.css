@@ -1,0 +1,5 @@
+/* ---- リセットCSS（modern-normalize） ---- */
+@import "modern-normalize";
+
+/* ---- Tailwind 本体 ---- */
+@import "tailwindcss";
