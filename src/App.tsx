@@ -16,7 +16,7 @@ export const App = () => {
   }, [inputMessage]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-8 bg-gray-100">
+    <div className="flex min-h-screen items-center justify-center p-8 bg-gray-50">
       <div className="flex flex-col gap-4 w-full max-w-2xl">
         <Textarea
           placeholder="Type your message here."
