@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { invoke } from "@tauri-apps/api/core";
 
 import { Textarea } from "./components/ui/textarea";
 import { Button } from "./components/ui/button";
@@ -15,6 +16,12 @@ export const App = () => {
     setSendBtnDisabled(!inputMessage.trim());
   }, [inputMessage]);
 
+  // 入力メッセージ送信処理
+  const sendMessage = async () => {
+    // TODO: メッセージ送信処理を実装すること
+    console.log(await invoke("send_message", { message: inputMessage }));
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center p-8 bg-gray-50">
       <div className="flex flex-col gap-4 w-full max-w-2xl">
@@ -27,7 +34,13 @@ export const App = () => {
           }}
         />
         <div className="flex justify-end">
-          <Button variant="outline" disabled={sendBtnDisabled}>
+          <Button
+            variant="outline"
+            disabled={sendBtnDisabled}
+            onClick={async () => {
+              await sendMessage();
+            }}
+          >
             Send
           </Button>
         </div>
