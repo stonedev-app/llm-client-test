@@ -1,7 +1,9 @@
-export const App = () => {
+import Button from "@mui/material/Button";
+
+export function App() {
   return (
     <>
-      <p>App.tsx</p>
+      <Button variant="contained">Hello world</Button>
     </>
   );
-};
+}
