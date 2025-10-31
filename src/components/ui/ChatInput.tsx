@@ -12,7 +12,9 @@ export default function ChatInput() {
     if (!message.trim()) return;
     // TODO: メッセージ送信処理を実装すること
     console.log("送信:", message);
-    // メッセージクリア処理
+    // 改行コードをクリア
+    setMessage(message.replace(/\n/g, ""));
+    // メッセージクリア
     setMessage("");
   };
 
@@ -30,12 +32,23 @@ export default function ChatInput() {
       {/* テキストフィールド。outlinedの枠線は無効化 */}
       <TextField
         fullWidth
+        multiline
+        maxRows={6}
         placeholder="メッセージを入力..."
         variant="outlined"
         size="small"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && handleSend()}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            // Shift + Enterの場合はメッセージ送信
+            if (e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+            // Enterキー入力の場合は改行
+          }
+        }}
         sx={{
           "& fieldset": { border: "none" },
         }}
