@@ -43,7 +43,7 @@ export default function ChatInput() {
           if (e.key === "Enter") {
             // Shift + Enterの場合はメッセージ送信
             if (e.shiftKey) {
-              e.preventDefault();
+              e.preventDefault(); // 改行コード入力は抑制
               handleSend();
             }
             // Enterキー入力の場合は改行
