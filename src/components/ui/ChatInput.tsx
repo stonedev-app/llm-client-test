@@ -1,17 +1,23 @@
-import * as React from "react";
+import { useState } from "react";
 import { TextField, IconButton, Paper } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 
 export default function ChatInput() {
-  const [message, setMessage] = React.useState("");
+  // メッセージ
+  const [message, setMessage] = useState("");
 
+  // メッセージ送信イベント
   const handleSend = () => {
+    // メッセージが空の場合は処理を中断
     if (!message.trim()) return;
+    // TODO: メッセージ送信処理を実装すること
     console.log("送信:", message);
+    // メッセージクリア処理
     setMessage("");
   };
 
   return (
+    // テキストフィールド装飾
     <Paper
       elevation={3}
       sx={{
@@ -21,6 +27,7 @@ export default function ChatInput() {
         borderRadius: "24px",
       }}
     >
+      {/* テキストフィールド。outlinedの枠線は無効化 */}
       <TextField
         fullWidth
         placeholder="メッセージを入力..."
@@ -33,6 +40,7 @@ export default function ChatInput() {
           "& fieldset": { border: "none" },
         }}
       />
+      {/* アイコンボタン */}
       <IconButton
         onClick={handleSend}
         sx={{
@@ -41,6 +49,7 @@ export default function ChatInput() {
           "&:hover": { bgcolor: "primary.dark" },
         }}
       >
+        {/* 送信アイコン */}
         <SendIcon />
       </IconButton>
     </Paper>
