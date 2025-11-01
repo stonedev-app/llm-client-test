@@ -8,13 +8,13 @@ export function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
 
   // メッセージ送信イベント
-  const handleSend = (text: string) => {
+  const handleSend = (message: string) => {
     // TODO: デバッグ用。後で消すこと
-    console.log("送信:", text);
+    console.log("送信:", message);
     // 新規メッセージ
     const newMessage: Message = {
       id: messages.length + 1,
-      text,
+      text: message,
       fromMe: true,
     };
     // メッセージ配列に新規メッセージを追加して再設定
