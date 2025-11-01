@@ -50,7 +50,7 @@ export function ChatPage() {
           <ChatInput onSend={handleSend} />
         </Box>
       ) : (
-        // チャット履歴がない場合は画面中央(上下方向)に表示
+        // チャット履歴がない場合、チャット入力は画面中央(上下方向)に表示
         <Box
           sx={{
             flex: 1,
