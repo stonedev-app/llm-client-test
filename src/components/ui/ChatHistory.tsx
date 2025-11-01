@@ -25,8 +25,9 @@ export default function ChatHistory({ messages }: ChatHistoryProps) {
         display: "flex",
         flexDirection: "column",
         gap: 1,
-        p: 1,
+        p: 2,
         bgcolor: "grey.100",
+        borderRadius: 3,
       }}
     >
       {messages.map((msg) => (

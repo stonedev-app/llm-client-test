@@ -42,7 +42,7 @@ export default function ChatInput({ onSend }: ChatInputProps) {
         display: "flex",
         flexDirection: "column",
         gap: 1,
-        borderRadius: "12px",
+        borderRadius: 3,
         width: "100%",
       }}
     >
