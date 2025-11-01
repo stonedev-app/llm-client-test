@@ -3,6 +3,11 @@ import ChatHistory from "../components/ui/ChatHistory";
 import ChatInput from "../components/ui/ChatInput";
 import { Message } from "../types/Message";
 
+/**
+ * チャット画面コンポーネント
+ *
+ * @returns JSX要素
+ */
 export function ChatPage() {
   // メッセージ配列
   const [messages, setMessages] = useState<Message[]>([]);

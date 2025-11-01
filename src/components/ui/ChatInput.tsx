@@ -2,10 +2,21 @@ import { useState } from "react";
 import { Box, TextField, IconButton, Paper } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 
+/**
+ * チャット入力プロパティ
+ * @property onSend 送信イベントハンドラ
+ */
 interface ChatInputProps {
   onSend: (message: string) => void;
 }
 
+/**
+ * チャット入力コンポーネント
+ *
+ * @param props チャット入力プロパティ
+ * @param props.onSend 送信イベントハンドラ
+ * @returns JSX要素
+ */
 export default function ChatInput({ onSend }: ChatInputProps) {
   // メッセージ
   const [message, setMessage] = useState("");

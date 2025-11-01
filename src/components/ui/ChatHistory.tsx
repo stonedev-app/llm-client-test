@@ -1,10 +1,21 @@
 import { Box, Paper, Typography } from "@mui/material";
 import { Message } from "../../types/Message";
 
+/**
+ * チャット履歴プロパティ
+ * @property messages メッセージ配列
+ */
 interface ChatHistoryProps {
   messages: Message[];
 }
 
+/**
+ * チャット履歴コンポーネント
+ *
+ * @param props チャット履歴プロパティ
+ * @param props.messages メッセージ配列
+ * @returns JSX要素
+ */
 export default function ChatHistory({ messages }: ChatHistoryProps) {
   return (
     <Box
