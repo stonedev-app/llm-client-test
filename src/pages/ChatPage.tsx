@@ -34,6 +34,8 @@ export function ChatPage() {
         display: "flex",
         flexDirection: "column",
         p: 4,
+        mx: "auto",
+        maxWidth: "700px",
       }}
     >
       {/* メッセージがまだない場合は、チャット履歴は表示しない */}
