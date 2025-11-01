@@ -59,6 +59,7 @@ export default function ChatInput() {
         {/* アイコンボタン */}
         <IconButton
           onClick={handleSend}
+          disabled={!message.trim()}
           sx={{
             bgcolor: "primary.main",
             color: "white",
