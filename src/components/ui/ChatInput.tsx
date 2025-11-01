@@ -43,6 +43,7 @@ export default function ChatInput({ onSend }: ChatInputProps) {
         flexDirection: "column",
         gap: 1,
         borderRadius: "12px",
+        width: "100%",
       }}
     >
       {/* テキストフィールド。outlinedの枠線は無効化 */}
