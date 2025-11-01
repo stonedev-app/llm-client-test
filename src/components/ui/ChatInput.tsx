@@ -50,7 +50,7 @@ export default function ChatInput({ onSend }: ChatInputProps) {
       <TextField
         fullWidth
         multiline
-        maxRows={6}
+        maxRows={3}
         placeholder="メッセージを入力..."
         variant="outlined"
         size="small"
