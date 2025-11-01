@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Box } from "@mui/material";
 import ChatHistory from "../components/ui/ChatHistory";
 import ChatInput from "../components/ui/ChatInput";
 import { Message } from "../types/Message";
@@ -28,10 +29,16 @@ export function ChatPage() {
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        p: 4,
+      }}
+    >
       {/* メッセージがまだない場合は、チャット履歴は表示しない */}
       {messages.length > 0 && <ChatHistory messages={messages} />}
       <ChatInput onSend={handleSend} />
-    </>
+    </Box>
   );
 }
