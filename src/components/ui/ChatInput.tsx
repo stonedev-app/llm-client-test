@@ -2,7 +2,11 @@ import { useState } from "react";
 import { Box, TextField, IconButton, Paper } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 
-export default function ChatInput() {
+interface ChatInputProps {
+  onSend: (message: string) => void;
+}
+
+export default function ChatInput({ onSend }: ChatInputProps) {
   // メッセージ
   const [message, setMessage] = useState("");
 
@@ -10,8 +14,8 @@ export default function ChatInput() {
   const handleSend = () => {
     // メッセージが空の場合は処理を中断
     if (!message.trim()) return;
-    // TODO: メッセージ送信処理を実装すること
-    console.log("送信:", message);
+    // メッセージ送信
+    onSend(message);
     // 改行コードをクリア
     setMessage(message.replace(/\n/g, ""));
     // メッセージクリア

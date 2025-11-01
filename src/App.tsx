@@ -1,12 +1,12 @@
 import CssBaseline from "@mui/material/CssBaseline";
-import ChatInput from "./components/ui/ChatInput";
+import { ChatPage } from "./pages/ChatPage";
 
 export function App() {
   return (
     <>
       {/* リセットCSSを適用 */}
       <CssBaseline />
-      <ChatInput />
+      <ChatPage />
     </>
   );
 }
