@@ -33,14 +33,34 @@ export function ChatPage() {
       sx={{
         display: "flex",
         flexDirection: "column",
+        height: "100vh",
         p: 4,
         mx: "auto",
         maxWidth: "700px",
       }}
     >
-      {/* メッセージがまだない場合は、チャット履歴は表示しない */}
-      {messages.length > 0 && <ChatHistory messages={messages} />}
-      <ChatInput onSend={handleSend} />
+      {messages.length > 0 ? (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <ChatHistory messages={messages} />
+          <ChatInput onSend={handleSend} />
+        </Box>
+      ) : (
+        // チャット履歴がない場合は画面中央(上下方向)に表示
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <ChatInput onSend={handleSend} />
+        </Box>
+      )}
     </Box>
   );
 }
