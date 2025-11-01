@@ -20,6 +20,7 @@ export default function ChatHistory({ messages }: ChatHistoryProps) {
   return (
     <Box
       sx={{
+        width: "100%",
         overflowY: "auto",
         display: "flex",
         flexDirection: "column",
