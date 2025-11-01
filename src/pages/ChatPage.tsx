@@ -40,15 +40,20 @@ export function ChatPage() {
       }}
     >
       {messages.length > 0 ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <ChatHistory messages={messages} />
+        <>
+          {/* チャット履歴がある場合、チャット入力は画面下(上下方向)に表示 */}
+          <Box
+            sx={{
+              display: "flex",
+              flex: 1,
+              overflowY: "auto",
+              mb: 2,
+            }}
+          >
+            <ChatHistory messages={messages} />
+          </Box>
           <ChatInput onSend={handleSend} />
-        </Box>
+        </>
       ) : (
         // チャット履歴がない場合、チャット入力は画面中央(上下方向)に表示
         <Box
