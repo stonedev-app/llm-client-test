@@ -28,6 +28,9 @@ export function ChatPage() {
     // TODO: メッセージ送信処理を実装すること
   };
 
+  // メッセージ配列が存在するか
+  const hasMessages = messages.length > 0;
+
   return (
     <Box
       sx={{
@@ -39,33 +42,31 @@ export function ChatPage() {
         maxWidth: "700px",
       }}
     >
-      {messages.length > 0 ? (
-        <>
-          {/* チャット履歴がある場合、チャット入力は画面下(上下方向)に表示 */}
-          <Box
-            sx={{
-              display: "flex",
-              flex: 1,
-              overflowY: "auto",
-              mb: 2,
-            }}
-          >
-            <ChatHistory messages={messages} />
-          </Box>
-          <ChatInput onSend={handleSend} />
-        </>
-      ) : (
-        // チャット履歴がない場合、チャット入力は画面中央(上下方向)に表示
+      {hasMessages && (
+        // メッセージ配列がある場合は、チャット履歴を表示
+        // チャット入力欄は画面下に移動
         <Box
           sx={{
-            flex: 1,
             display: "flex",
-            alignItems: "center",
+            flex: 1,
+            overflowY: "auto",
+            mb: 2,
           }}
         >
-          <ChatInput onSend={handleSend} />
+          <ChatHistory messages={messages} />
         </Box>
       )}
+      {/* チャット入力欄 */}
+      {/* チャット履歴がない場合は、画面中央(上下方向) */}
+      <Box
+        sx={{
+          flex: !hasMessages ? 1 : 0,
+          display: "flex",
+          alignItems: !hasMessages ? "center" : "stretch",
+        }}
+      >
+        <ChatInput onSend={handleSend} />
+      </Box>
     </Box>
   );
 }
