@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextField, IconButton, Paper } from "@mui/material";
+import { Box, TextField, IconButton, Paper } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 
 export default function ChatInput() {
@@ -25,8 +25,9 @@ export default function ChatInput() {
       sx={{
         p: 1.5,
         display: "flex",
-        alignItems: "center",
-        borderRadius: "24px",
+        flexDirection: "column",
+        gap: 1,
+        borderRadius: "12px",
       }}
     >
       {/* テキストフィールド。outlinedの枠線は無効化 */}
@@ -53,18 +54,21 @@ export default function ChatInput() {
           "& fieldset": { border: "none" },
         }}
       />
-      {/* アイコンボタン */}
-      <IconButton
-        onClick={handleSend}
-        sx={{
-          bgcolor: "primary.main",
-          color: "white",
-          "&:hover": { bgcolor: "primary.dark" },
-        }}
-      >
-        {/* 送信アイコン */}
-        <SendIcon />
-      </IconButton>
+      {/* アイコンボタンを右寄せ */}
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        {/* アイコンボタン */}
+        <IconButton
+          onClick={handleSend}
+          sx={{
+            bgcolor: "primary.main",
+            color: "white",
+            "&:hover": { bgcolor: "primary.dark" },
+          }}
+        >
+          {/* 送信アイコン */}
+          <SendIcon />
+        </IconButton>
+      </Box>
     </Paper>
   );
 }
