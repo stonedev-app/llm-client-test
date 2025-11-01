@@ -47,7 +47,15 @@ export default function ChatHistory({ messages }: ChatHistoryProps) {
               maxWidth: "70%",
             }}
           >
-            <Typography variant="body2">{msg.text}</Typography>
+            <Typography
+              variant="body2"
+              sx={{
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+              }}
+            >
+              {msg.text}
+            </Typography>
           </Paper>
         </Box>
       ))}
