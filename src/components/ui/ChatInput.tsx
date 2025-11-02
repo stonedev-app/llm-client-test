@@ -1,13 +1,21 @@
 import { useState } from "react";
-import { Box, TextField, IconButton, Paper } from "@mui/material";
+import {
+  Box,
+  TextField,
+  IconButton,
+  Paper,
+  CircularProgress,
+} from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 
 /**
  * チャット入力プロパティ
  * @property onSend 送信イベントハンドラ
+ * @property isSending 送信中
  */
 interface ChatInputProps {
-  onSend: (message: string) => void;
+  onSend: (message: string) => Promise<void>;
+  isSending: boolean;
 }
 
 /**
@@ -15,9 +23,10 @@ interface ChatInputProps {
  *
  * @param props チャット入力プロパティ
  * @param props.onSend 送信イベントハンドラ
+ * @param props.isSending 送信中
  * @returns JSX要素
  */
-export default function ChatInput({ onSend }: ChatInputProps) {
+export default function ChatInput({ onSend, isSending }: ChatInputProps) {
   // メッセージ
   const [message, setMessage] = useState("");
 
@@ -49,7 +58,8 @@ export default function ChatInput({ onSend }: ChatInputProps) {
         fullWidth
         multiline
         maxRows={3}
-        placeholder="メッセージを入力..."
+        placeholder={isSending ? "応答待機中..." : "メッセージを入力..."}
+        disabled={isSending}
         variant="outlined"
         size="small"
         value={message}
@@ -73,15 +83,20 @@ export default function ChatInput({ onSend }: ChatInputProps) {
         {/* アイコンボタン */}
         <IconButton
           onClick={handleSend}
-          disabled={!message.trim()}
+          disabled={!message.trim() || isSending}
           sx={{
             bgcolor: "primary.main",
             color: "white",
             "&:hover": { bgcolor: "primary.dark" },
           }}
         >
-          {/* 送信アイコン */}
-          <SendIcon />
+          {isSending ? (
+            // ローディングアイコン
+            <CircularProgress size={22} color="inherit" />
+          ) : (
+            // 送信アイコン
+            <SendIcon />
+          )}
         </IconButton>
       </Box>
     </Paper>

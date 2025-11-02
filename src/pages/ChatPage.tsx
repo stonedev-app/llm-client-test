@@ -13,9 +13,17 @@ import { requestLLM } from "../api/llmClient";
 export function ChatPage() {
   // メッセージ配列
   const [messages, setMessages] = useState<Message[]>([]);
+  // 送信中フラグ
+  const [isSending, setIsSending] = useState(false);
 
   // メッセージ送信イベント
-  const handleSend = (message: string) => {
+  const handleSend = async (message: string) => {
+    // 二重送信防止
+    if (isSending) return;
+
+    // メッセージ送信開始
+    setIsSending(true);
+
     // メッセージ配列に新規メッセージを追加して再設定
     setMessages((prev) => [
       ...prev,
@@ -26,7 +34,10 @@ export function ChatPage() {
       },
     ]);
     // LLMにメッセージ送信
-    requestLLM(message, setMessages);
+    await requestLLM(message, setMessages);
+
+    // メッセージ送信終了
+    setIsSending(false);
   };
 
   // メッセージ配列が存在するか
@@ -66,7 +77,7 @@ export function ChatPage() {
           alignItems: !hasMessages ? "center" : "stretch",
         }}
       >
-        <ChatInput onSend={handleSend} />
+        <ChatInput onSend={handleSend} isSending={isSending} />
       </Box>
     </Box>
   );
