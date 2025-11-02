@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import ChatHistory from "../components/ui/ChatHistory";
 import ChatInput from "../components/ui/ChatInput";
 import { Message } from "../types/Message";
+import { requestLLM } from "../api/llmClient";
 
 /**
  * チャット画面コンポーネント
@@ -15,17 +16,17 @@ export function ChatPage() {
 
   // メッセージ送信イベント
   const handleSend = (message: string) => {
-    // TODO: デバッグ用。後で消すこと
-    console.log("送信:", message);
-    // 新規メッセージ
-    const newMessage: Message = {
-      id: messages.length + 1,
-      text: message,
-      fromMe: true,
-    };
     // メッセージ配列に新規メッセージを追加して再設定
-    setMessages([...messages, newMessage]);
-    // TODO: メッセージ送信処理を実装すること
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: prev.length + 1,
+        text: message,
+        fromMe: true,
+      },
+    ]);
+    // LLMにメッセージ送信
+    requestLLM(message, setMessages);
   };
 
   // メッセージ配列が存在するか
