@@ -24,20 +24,22 @@ export function ChatPage() {
     // メッセージ送信開始
     setIsSending(true);
 
-    // メッセージ配列に新規メッセージを追加して再設定
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        text: message,
-        fromMe: true,
-      },
-    ]);
-    // LLMにメッセージ送信
-    await requestLLM(message, setMessages);
-
-    // メッセージ送信終了
-    setIsSending(false);
+    try {
+      // メッセージ配列に新規メッセージを追加して再設定
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: prev.length + 1,
+          text: message,
+          fromMe: true,
+        },
+      ]);
+      // LLMにメッセージ送信
+      await requestLLM(message, setMessages);
+    } finally {
+      // メッセージ送信終了
+      setIsSending(false);
+    }
   };
 
   // メッセージ配列が存在するか
