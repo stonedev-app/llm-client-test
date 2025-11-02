@@ -27,8 +27,6 @@ export default function ChatInput({ onSend }: ChatInputProps) {
     if (!message.trim()) return;
     // メッセージ送信
     onSend(message);
-    // 改行コードをクリア
-    setMessage(message.replace(/\n/g, ""));
     // メッセージクリア
     setMessage("");
   };
