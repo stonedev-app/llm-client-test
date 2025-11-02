@@ -26,13 +26,13 @@ pub async fn request_llm(prompt: String) -> Result<String, String> {
         .await
     {
         Ok(response) => response,
-        Err(e) => return Err(e.to_string()),
+        Err(e) => return Err(format!("接続NG: {}", e.to_string())),
     };
 
     // レスポンス文字列(json)を取得
     let text = match res.text().await {
         Ok(t) => t,
-        Err(e) => return Err(e.to_string()),
+        Err(e) => return Err(format!("受信NG: {}", e.to_string())),
     };
 
     // 応答文字列に整形する
