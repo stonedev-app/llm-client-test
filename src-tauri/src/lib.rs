@@ -6,7 +6,7 @@ async fn request_llm(prompt: String) -> Result<String, String> {
     let client = Client::new();
 
     let body = json!({
-        "model": "llama3",
+        "model": "gemma3:1b-it-qat",
         "prompt": prompt
     });
 
