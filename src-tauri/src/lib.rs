@@ -2,7 +2,7 @@ use reqwest::Client;
 use serde_json::json;
 
 #[tauri::command]
-async fn call_ollama(prompt: String) -> Result<String, String> {
+async fn request_llm(prompt: String) -> Result<String, String> {
     let client = Client::new();
 
     let body = json!({
@@ -33,7 +33,7 @@ async fn call_ollama(prompt: String) -> Result<String, String> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![call_ollama])
+        .invoke_handler(tauri::generate_handler![request_llm])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

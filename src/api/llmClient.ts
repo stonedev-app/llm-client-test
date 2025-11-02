@@ -6,7 +6,7 @@ export const requestLLM = async (
   message: string,
   setMessages: Dispatch<SetStateAction<Message[]>>
 ) => {
-  const resMessage: string = await invoke("call_ollama", { prompt: message });
+  const resMessage: string = await invoke("request_llm", { prompt: message });
   // メッセージ配列に応答メッセージを追加して再設定
   setMessages((prev) => [
     ...prev,
