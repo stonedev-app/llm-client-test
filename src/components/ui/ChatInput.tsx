@@ -25,10 +25,10 @@ export default function ChatInput({ onSend }: ChatInputProps) {
   const handleSend = () => {
     // メッセージが空の場合は処理を中断
     if (!message.trim()) return;
-    // メッセージ送信
-    onSend(message);
     // メッセージクリア
     setMessage("");
+    // メッセージ送信
+    onSend(message);
   };
 
   return (
