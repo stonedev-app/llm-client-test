@@ -67,7 +67,7 @@ export function ChatPage() {
             mb: 2,
           }}
         >
-          <ChatHistory messages={messages} />
+          <ChatHistory messages={messages} isSending={isSending} />
         </Box>
       )}
       {/* チャット入力欄 */}

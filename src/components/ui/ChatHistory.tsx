@@ -4,9 +4,11 @@ import { Message } from "../../types/Message";
 /**
  * チャット履歴プロパティ
  * @property messages メッセージ配列
+ * @property isSending 送信中
  */
 interface ChatHistoryProps {
   messages: Message[];
+  isSending: boolean;
 }
 
 /**
@@ -14,9 +16,23 @@ interface ChatHistoryProps {
  *
  * @param props チャット履歴プロパティ
  * @param props.messages メッセージ配列
+ * @param props.isSending 送信中
  * @returns JSX要素
  */
-export default function ChatHistory({ messages }: ChatHistoryProps) {
+export default function ChatHistory({ messages, isSending }: ChatHistoryProps) {
+  // チャット履歴に表示するメッセージ配列
+  const displayMessages = [...messages];
+
+  // 送信中の場合
+  if (isSending) {
+    // 仮メッセージを追加する
+    displayMessages.push({
+      id: -1, // 仮ID
+      text: "入力中…",
+      fromMe: false,
+    });
+  }
+
   return (
     <Box
       sx={{
@@ -30,7 +46,7 @@ export default function ChatHistory({ messages }: ChatHistoryProps) {
         borderRadius: 3,
       }}
     >
-      {messages.map((msg) => (
+      {displayMessages.map((msg) => (
         <Box
           key={msg.id}
           sx={{
