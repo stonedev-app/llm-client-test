@@ -3,6 +3,12 @@ use serde_json::{json, Value};
 
 #[tauri::command]
 pub async fn request_llm(prompt: String) -> Result<String, String> {
+    // 事前準備
+    // ollamaのコンテナを起動
+    // docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+    // モデル(gemma3:1b-it-qat)をダウンロード
+    // docker exec -it ollama ollama pull gemma3:1b-it-qat
+
     // クライアント生成
     let client = Client::new();
 
