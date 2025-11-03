@@ -1,7 +1,30 @@
-# Tauri + React + Typescript
+# LLM Client
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+## 概要
 
-## Recommended IDE Setup
+LLM（言語モデル）クライアント。  
+Ollama サーバーに接続して、簡易チャット形式でモデルに質問・応答が可能です。
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## 動作環境
+
+- macOS（Intel）で動作確認済み
+- Ollama サーバーが http://localhost:11434/api/generate で動作していること
+- 言語モデルは `gemma3:1b-it-qat` 固定
+
+## インストール
+
+1. [Release](https://github.com/stonedev-app/llm-client-test/releases)からモジュールをダウンロード
+2. `.dmg` ファイルを開き、アプリを Applications フォルダにコピー
+3. アプリを起動
+
+## 使い方
+
+1. メッセージを入力
+2. 送信ボタンで LLM に送信
+3. 応答メッセージが画面に表示される
+4. 過去メッセージの履歴も確認可能
+
+## 注意点
+
+- 現在は最新メッセージのみ LLM に送信
+- 配布バイナリは macOS（Intel）用のみ
