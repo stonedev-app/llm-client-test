@@ -21,8 +21,8 @@ pub async fn request_llm(content: String) -> Result<String, String> {
         "messages": [{
           "role": "user",
           "content": content
-      }],
-      "stream": false
+        }],
+        "stream": false
     });
 
     // ollamaにリクエスト
