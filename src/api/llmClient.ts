@@ -7,7 +7,9 @@ export const requestLLM = async (
   setMessages: Dispatch<SetStateAction<Message[]>>
 ): Promise<void> => {
   try {
-    const resMessage: string = await invoke("request_llm", { prompt: message });
+    const resMessage: string = await invoke("request_llm", {
+      content: message,
+    });
     // メッセージ配列に応答メッセージを追加して再設定
     setMessages((prev) => [
       ...prev,
