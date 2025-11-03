@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Box } from "@mui/material";
 import ChatHistory from "../components/ui/ChatHistory";
 import ChatInput from "../components/ui/ChatInput";
@@ -15,6 +15,15 @@ export function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   // 送信中フラグ
   const [isSending, setIsSending] = useState(false);
+
+  // チャット履歴の最後のメッセージ参照
+  const lastMessageRef = useRef<HTMLDivElement>(null);
+
+  // メッセージに変更があった場合
+  useEffect(() => {
+    // 最後のメッセージにまでスクロール
+    lastMessageRef?.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   // メッセージ送信イベント
   const handleSend = async (message: string) => {
@@ -67,7 +76,11 @@ export function ChatPage() {
             mb: 2,
           }}
         >
-          <ChatHistory messages={messages} isSending={isSending} />
+          <ChatHistory
+            messages={messages}
+            isSending={isSending}
+            lastMessageRef={lastMessageRef}
+          />
         </Box>
       )}
       {/* チャット入力欄 */}

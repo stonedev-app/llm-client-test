@@ -5,10 +5,12 @@ import { Message } from "../../types/Message";
  * チャット履歴プロパティ
  * @property messages メッセージ配列
  * @property isSending 送信中
+ * @property lastMessageRef? 最後のメッセージへの参照(※スクロールが必要な場合は設定)
  */
 interface ChatHistoryProps {
   messages: Message[];
   isSending: boolean;
+  lastMessageRef?: React.Ref<HTMLDivElement>;
 }
 
 /**
@@ -17,9 +19,14 @@ interface ChatHistoryProps {
  * @param props チャット履歴プロパティ
  * @param props.messages メッセージ配列
  * @param props.isSending 送信中
+ * @param props.lastMessageRef 最後のメッセージへの参照
  * @returns JSX要素
  */
-export default function ChatHistory({ messages, isSending }: ChatHistoryProps) {
+export default function ChatHistory({
+  messages,
+  isSending,
+  lastMessageRef,
+}: ChatHistoryProps) {
   // チャット履歴に表示するメッセージ配列
   const displayMessages = [...messages];
 
@@ -46,9 +53,11 @@ export default function ChatHistory({ messages, isSending }: ChatHistoryProps) {
         borderRadius: 3,
       }}
     >
-      {displayMessages.map((msg) => (
+      {displayMessages.map((msg, idx) => (
         <Box
           key={msg.id}
+          // 最後のメッセージだけ参照を追加する
+          ref={idx === displayMessages.length - 1 ? lastMessageRef : null}
           sx={{
             display: "flex",
             justifyContent: msg.fromMe ? "flex-end" : "flex-start",
