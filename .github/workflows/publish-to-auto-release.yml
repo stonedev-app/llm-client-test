@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - release
+  workflow_dispatch:
 
 # https://github.com/tauri-apps/tauri-action/blob/dev/examples/publish-to-auto-release.yml
 
