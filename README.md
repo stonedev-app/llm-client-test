@@ -8,7 +8,7 @@ Ollama サーバーに接続して、チャット形式でモデルに質問が�
 
 ## 動作環境
 
-- Ollama サーバーが http://localhost:11434/api/generate で動作していること
+- Ollama サーバーが http://localhost:11434 で動作していること
 - 言語モデルは `gemma3:1b-it-qat` 固定
 
 ## インストール
