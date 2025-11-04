@@ -2,9 +2,8 @@ name: "publish"
 
 on:
   push:
-    branches:
-      - release
-  workflow_dispatch:
+    tags:
+      - "v*" # v1.0.0 など、"v"で始まるタグのpush時に実行
 
 # https://github.com/tauri-apps/tauri-action/blob/dev/examples/publish-to-auto-release.yml
 
@@ -58,8 +57,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
-          releaseName: "App v__VERSION__"
+          tagName: ${{ github.ref_name }}
+          releaseName: "${{ github.ref_name }}"
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
