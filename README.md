@@ -3,29 +3,27 @@
 ## 概要
 
 LLM（言語モデル）クライアント。  
-Ollama サーバーに接続して、簡易チャット形式でモデルに質問・応答が可能です。  
+Ollama サーバーに接続して、チャット形式でモデルに質問が可能です。  
 ![スクリーンショット](docs/images/screenshots_llm_client.png)
 
 ## 動作環境
 
-- macOS（Intel）で動作確認済み
-- Ollama サーバーが http://localhost:11434/api/generate で動作していること
+- Ollama サーバーが http://localhost:11434 で動作していること
 - 言語モデルは `gemma3:1b-it-qat` 固定
 
 ## インストール
 
-1. [Release](https://github.com/stonedev-app/llm-client-test/releases)からモジュールをダウンロード
-2. `.dmg` ファイルを開き、アプリを Applications フォルダにコピー
+1. [Release](https://github.com/stonedev-app/llm-client-test/releases)からダウンロード
+2. インストール
 3. アプリを起動
 
 ## 使い方
 
 1. メッセージを入力
 2. 送信ボタンで LLM に送信
-3. 応答メッセージが画面に表示される
-4. 過去メッセージの履歴も確認可能
+3. 応答メッセージが画面に表示
+4. メッセージ履歴も表示される
 
 ## 注意点
 
 - 現在は最新メッセージのみ LLM に送信
-- 配布バイナリは macOS（Intel）用のみ
