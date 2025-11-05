@@ -1,8 +1,11 @@
+mod types;
+
 use reqwest::Client;
-use serde_json::{json, Value};
+use serde_json::json;
+use types::ChatResponse;
 
 #[tauri::command]
-pub async fn request_llm(prompt: String) -> Result<String, String> {
+pub async fn request_llm(content: String) -> Result<String, String> {
     // 事前準備
     // ollamaのコンテナを起動
     // docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
@@ -15,40 +18,36 @@ pub async fn request_llm(prompt: String) -> Result<String, String> {
     // jsonリクエスト内容
     let body = json!({
         "model": "gemma3:1b-it-qat",    // モデルは固定値
-        "prompt": prompt
+        "messages": [{
+          "role": "user",
+          "content": content
+        }],
+        "stream": false
     });
 
     // ollamaにリクエスト
     let res = match client
-        .post("http://localhost:11434/api/generate")
+        .post("http://localhost:11434/api/chat")
         .json(&body)
         .send()
         .await
     {
         Ok(response) => response,
-        Err(e) => return Err(format!("接続NG: {}", e.to_string())),
+        Err(e) => return Err(format!("接続失敗: {}", e.to_string())),
     };
 
     // レスポンス文字列(json)を取得
     let text = match res.text().await {
         Ok(t) => t,
-        Err(e) => return Err(format!("受信NG: {}", e.to_string())),
+        Err(e) => return Err(format!("受信失敗: {}", e.to_string())),
     };
 
-    // 応答文字列に整形する
-    let mut result = String::new();
-    // １行ずつ処理する
-    for line in text.lines() {
-        // jsonとして解析する
-        if let Ok(json) = serde_json::from_str::<Value>(line) {
-            // responseキーの値を取得
-            if let Some(response_part) = json.get("response").and_then(|v| v.as_str()) {
-                // 取得した値を応答文字列に追加する
-                result.push_str(response_part);
-            }
-        }
-    }
+    // JSONとして解析する
+    let chat: ChatResponse = match serde_json::from_str(&text) {
+        Ok(t) => t,
+        Err(e) => return Err(format!("JSON解析失敗: {}", e.to_string())),
+    };
 
-    // 応答文字列を返却する
-    return Ok(result);
+    // コンテントを返却する
+    return Ok(chat.message.content);
 }
