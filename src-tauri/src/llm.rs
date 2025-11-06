@@ -2,7 +2,9 @@ mod types;
 
 use reqwest::Client;
 use serde_json::json;
-use types::ChatResponse;
+
+use crate::llm::types::ChatResponse;
+use crate::llm::types::ErrorResponse;
 
 #[tauri::command]
 pub async fn request_llm(content: String) -> Result<String, String> {
@@ -36,18 +38,32 @@ pub async fn request_llm(content: String) -> Result<String, String> {
         Err(e) => return Err(format!("接続失敗: {}", e.to_string())),
     };
 
+    // HTTPステータスを取得
+    let http_status = res.status();
+
     // レスポンス文字列(json)を取得
     let text = match res.text().await {
         Ok(t) => t,
         Err(e) => return Err(format!("受信失敗: {}", e.to_string())),
     };
 
-    // JSONとして解析する
-    let chat: ChatResponse = match serde_json::from_str(&text) {
-        Ok(t) => t,
-        Err(e) => return Err(format!("JSON解析失敗: {}", e.to_string())),
-    };
-
-    // コンテントを返却する
-    return Ok(chat.message.content);
+    // HTTPステータスが200番台の場合
+    if http_status.is_success() {
+        // JSONとして解析する
+        let chat: ChatResponse = match serde_json::from_str(&text) {
+            Ok(t) => t,
+            Err(e) => return Err(format!("JSON解析失敗: {}", e.to_string())),
+        };
+        // コンテントを返却する
+        return Ok(chat.message.content);
+    // その他の場合
+    } else {
+        // JSONとして解析する
+        let error: ErrorResponse = match serde_json::from_str(&text) {
+            Ok(t) => t,
+            Err(e) => return Err(format!("JSON解析失敗: {}", e.to_string())),
+        };
+        // エラーを返却する
+        return Ok(error.error);
+    }
 }
