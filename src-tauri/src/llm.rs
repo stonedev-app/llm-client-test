@@ -14,8 +14,12 @@ pub async fn request_llm(content: String) -> Result<String, String> {
     // モデル(gemma3:1b-it-qat)をダウンロード
     // docker exec -it ollama ollama pull gemma3:1b-it-qat
 
+    // プロキシの設定されていると向き先がlocalhostでもプロキシ経由しようとするので、no_proxyを追加
     // クライアント生成
-    let client = Client::new();
+    let client = match Client::builder().no_proxy().build() {
+        Ok(c) => c,
+        Err(e) => return Err(format!("クライアント生成失敗: {}", e.to_string())),
+    };
 
     // jsonリクエスト内容
     let body = json!({
