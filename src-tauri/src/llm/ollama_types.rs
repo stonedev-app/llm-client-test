@@ -1,5 +1,19 @@
 use serde::Deserialize;
 
+/// Chat request
+///
+/// 参考URL
+/// https://docs.ollama.com/api/chat
+#[allow(dead_code)]
+#[derive(Debug, Deserialize)]
+pub struct ChatRequest {
+    /// Model name used to generate this message
+    pub model: String,
+
+    /// object
+    pub message: Message,
+}
+
 /// Chat response
 ///
 /// 参考URL
