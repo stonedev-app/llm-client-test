@@ -7,7 +7,7 @@ export const requestLLM = async (
   setMessages: Dispatch<SetStateAction<Message[]>>
 ): Promise<void> => {
   try {
-    const resMessage: string = await invoke("request_llm", {
+    const resMessage: string = await invoke("ollama_api_chat", {
       content: message,
     });
     // メッセージ配列に応答メッセージを追加して再設定
