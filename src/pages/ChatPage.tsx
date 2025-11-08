@@ -34,17 +34,22 @@ export function ChatPage() {
     setIsSending(true);
 
     try {
-      // メッセージ配列に新規メッセージを追加して再設定
-      setMessages((prev) => [
-        ...prev,
+      // 新規メッセージを追加したメッセージ配列を生成
+      const newMessages: Message[] = [
+        ...messages,
         {
-          id: prev.length + 1,
+          id: messages.length + 1,
           text: message,
           fromMe: true,
         },
-      ]);
+      ];
+      // メッセージ配列を設定
+      setMessages(newMessages);
       // LLMにメッセージ送信
-      await llm.ollama.requestApiChat(message, setMessages);
+      await llm.ollama.requestApiChat(
+        newMessages.map((msg) => ({ ...msg })),
+        setMessages
+      );
     } finally {
       // メッセージ送信終了
       setIsSending(false);
