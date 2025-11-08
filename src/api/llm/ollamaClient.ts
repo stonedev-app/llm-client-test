@@ -7,6 +7,7 @@ export const requestApiChat = async (
   setMessages: Dispatch<SetStateAction<Message[]>>
 ): Promise<void> => {
   try {
+    // LLMリクエスト処理を呼び出す
     const resMessage: string = await invoke("ollama_api_chat", {
       content: messages[messages.length - 1].text,
     });
