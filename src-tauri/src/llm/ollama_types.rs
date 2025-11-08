@@ -79,3 +79,11 @@ pub struct ErrorResponse {
     /// error message
     pub error: String,
 }
+
+/// Chat response or Error message
+#[derive(serde::Deserialize, Debug)]
+#[serde(untagged)]
+pub enum ChatOrErrorResponse {
+    Chat(ChatResponse),
+    Error(ErrorResponse),
+}
