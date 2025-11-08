@@ -19,13 +19,23 @@ pub async fn ollama_api_chat(messages: Vec<MessageDTO>) -> Result<String, String
         Err(e) => return Err(format!("クライアント生成失敗: {}", e.to_string())),
     };
 
+    // messages を ollama API 用の形式に変換
+    let api_messages: Vec<serde_json::Value> = messages
+        .into_iter()
+        .map(|m| {
+            json!({
+                // ユーザーが入力したメッセージはuser、LLMはassistantを設定する
+                "role": if m.from_me { "user" } else { "assistant" },
+                // ユーザー、又はLLMのメッセージ
+                "content": m.text
+            })
+        })
+        .collect();
+
     // jsonリクエスト内容
     let body = json!({
         "model": "gemma3:1b-it-qat",    // モデルは固定値
-        "messages": [{
-          "role": "user",
-          "content": messages[messages.len() - 1].text
-        }],
+        "messages": api_messages,
         "stream": false
     });
 
