@@ -1,1 +1,3 @@
-export * as ollama from "./ollamaClient";
+import * as ollama from "./ollamaClient";
+
+export const llm = { ollama };

@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import ChatHistory from "../components/ui/ChatHistory";
 import ChatInput from "../components/ui/ChatInput";
 import { Message } from "../types/Message";
-import { ollama } from "../api/llm";
+import { llm } from "../api/llm";
 
 /**
  * チャット画面コンポーネント
@@ -44,7 +44,7 @@ export function ChatPage() {
         },
       ]);
       // LLMにメッセージ送信
-      await ollama.requestApiChat(message, setMessages);
+      await llm.ollama.requestApiChat(message, setMessages);
     } finally {
       // メッセージ送信終了
       setIsSending(false);
