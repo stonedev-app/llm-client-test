@@ -9,7 +9,7 @@ export const requestApiChat = async (
   try {
     // LLMリクエスト処理を呼び出す
     const resMessage: string = await invoke("ollama_api_chat", {
-      content: messages[messages.length - 1].text,
+      messages,
     });
     // メッセージ配列に応答メッセージを追加して再設定
     setMessages((prev) => [

@@ -1,3 +1,4 @@
+mod front;
 mod llm;
 
 use llm::ollama_api_chat;

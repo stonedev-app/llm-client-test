@@ -2,9 +2,10 @@ use reqwest::Client;
 use serde_json::json;
 
 use super::ollama_types::{ChatResponse, ErrorResponse};
+use crate::front::front_types::MessageDTO;
 
 #[tauri::command]
-pub async fn ollama_api_chat(content: String) -> Result<String, String> {
+pub async fn ollama_api_chat(messages: Vec<MessageDTO>) -> Result<String, String> {
     // 事前準備
     // ollamaのコンテナを起動
     // docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
@@ -23,7 +24,7 @@ pub async fn ollama_api_chat(content: String) -> Result<String, String> {
         "model": "gemma3:1b-it-qat",    // モデルは固定値
         "messages": [{
           "role": "user",
-          "content": content
+          "content": messages[messages.len() - 1].text
         }],
         "stream": false
     });
