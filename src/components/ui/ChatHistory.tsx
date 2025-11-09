@@ -5,11 +5,13 @@ import { Message } from "../../types/Message";
  * チャット履歴プロパティ
  * @property messages メッセージ配列
  * @property isSending 送信中
+ * @property receivingMessage 受信中メッセージ
  * @property lastMessageRef? 最後のメッセージへの参照(※スクロールが必要な場合は設定)
  */
 interface ChatHistoryProps {
   messages: Message[];
   isSending: boolean;
+  receivingMessage: string;
   lastMessageRef?: React.Ref<HTMLDivElement>;
 }
 
@@ -19,12 +21,14 @@ interface ChatHistoryProps {
  * @param props チャット履歴プロパティ
  * @param props.messages メッセージ配列
  * @param props.isSending 送信中
+ * @param props.receivingMessage 受信中メッセージ
  * @param props.lastMessageRef 最後のメッセージへの参照
  * @returns JSX要素
  */
 export default function ChatHistory({
   messages,
   isSending,
+  receivingMessage,
   lastMessageRef,
 }: ChatHistoryProps) {
   // チャット履歴に表示するメッセージ配列
@@ -34,8 +38,10 @@ export default function ChatHistory({
   if (isSending) {
     // 仮メッセージを追加する
     displayMessages.push({
-      id: -1, // 仮ID
-      text: "入力中…",
+      // 仮ID
+      id: -1,
+      // 受信中メッセージを設定。未受信の場合は「入力中…」を設定
+      text: receivingMessage || "入力中…",
       fromMe: false,
     });
   }

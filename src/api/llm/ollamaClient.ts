@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { Dispatch, SetStateAction } from "react";
 import { Message } from "../../types/Message";
+import { Commands } from "../../tauri/constants";
 
 export const requestApiChat = async (
   messages: Message[],
@@ -8,7 +9,7 @@ export const requestApiChat = async (
 ): Promise<void> => {
   try {
     // LLMリクエスト処理を呼び出す
-    const resMessage: string = await invoke("ollama_api_chat", {
+    const resMessage = await invoke<string>(Commands.ollamaApiChat, {
       messages,
     });
     // メッセージ配列に応答メッセージを追加して再設定

@@ -34,25 +34,25 @@ pub struct ChatResponse {
     pub done: bool,
 
     /// Reason the response finished
-    pub done_reason: String,
+    pub done_reason: Option<String>,
 
     /// Total time spent generating in nanoseconds
-    pub total_duration: u64,
+    pub total_duration: Option<u64>,
 
     /// Time spent loading the model in nanoseconds
-    pub load_duration: u64,
+    pub load_duration: Option<u64>,
 
     /// Number of tokens in the prompt
-    pub prompt_eval_count: u32,
+    pub prompt_eval_count: Option<u32>,
 
     /// Time spent evaluating the prompt in nanoseconds
-    pub prompt_eval_duration: u64,
+    pub prompt_eval_duration: Option<u64>,
 
     /// Number of tokens generated in the response
-    pub eval_count: u32,
+    pub eval_count: Option<u32>,
 
     /// Time spent generating tokens in nanoseconds
-    pub eval_duration: u64,
+    pub eval_duration: Option<u64>,
 }
 
 /// Message
@@ -78,4 +78,12 @@ pub struct Message {
 pub struct ErrorResponse {
     /// error message
     pub error: String,
+}
+
+/// Chat response or Error message
+#[derive(serde::Deserialize, Debug)]
+#[serde(untagged)]
+pub enum ChatOrErrorResponse {
+    Chat(ChatResponse),
+    Error(ErrorResponse),
 }
