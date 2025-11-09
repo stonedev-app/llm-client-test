@@ -1,6 +1,7 @@
 use futures_util::stream::StreamExt;
 use reqwest::Client;
 use serde_json::json;
+use tauri::{AppHandle, Emitter};
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio_util::io::StreamReader;
 
@@ -8,7 +9,7 @@ use super::ollama_types::{ChatOrErrorResponse, ErrorResponse};
 use crate::front::front_types::MessageDTO;
 
 #[tauri::command]
-pub async fn ollama_api_chat(messages: Vec<MessageDTO>) -> Result<String, String> {
+pub async fn ollama_api_chat(app: AppHandle, messages: Vec<MessageDTO>) -> Result<String, String> {
     // 事前準備
     // ollamaのコンテナを起動
     // docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
@@ -92,7 +93,10 @@ pub async fn ollama_api_chat(messages: Vec<MessageDTO>) -> Result<String, String
             match res {
                 // 正常レスポンスの場合
                 ChatOrErrorResponse::Chat(chat) => {
-                    // レスポンスメッセージにコンテントを追加する
+                    // フロントに受信したメッセージを送信
+                    app.emit("receving_message", chat.message.content.clone())
+                        .map_err(|e| format!("ストリームエラー: {}", e))?;
+                    // レスポンスメッセージに受信したメッセージを追加する
                     res_message.push_str(&chat.message.content);
                 }
                 // エラーレスポンスの場合

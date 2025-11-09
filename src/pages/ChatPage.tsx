@@ -1,9 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { Box } from "@mui/material";
+import { listen } from "@tauri-apps/api/event";
+
 import ChatHistory from "../components/ui/ChatHistory";
 import ChatInput from "../components/ui/ChatInput";
 import { Message } from "../types/Message";
 import { llm } from "../api/llm";
+import { Events } from "../tauri/constants";
 
 /**
  * チャット画面コンポーネント
@@ -15,9 +18,46 @@ export function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   // 送信中フラグ
   const [isSending, setIsSending] = useState(false);
+  // 受信中メッセージ(ストリーミングメッセージ)
+  const [receivingMessage, setRecevingMessage] = useState<string>("");
 
   // チャット履歴の最後のメッセージ参照
   const lastMessageRef = useRef<HTMLDivElement>(null);
+
+  // チャット画面コンポーネントマウント時
+  useEffect(() => {
+    // メッセージリスナー登録解除
+    let unlisten: (() => void) | undefined;
+    // アンマウントフラグ(※React.StrictMode対策)
+    let canceled = false;
+
+    // メッセージリスナーを登録する
+    listen<string>(Events.recevingMessage, (event) => {
+      // ストリーミングで受け取ったメッセージを受信中メッセージに追加する
+      setRecevingMessage((prev) => prev + event.payload);
+    }).then((fn) => {
+      // マウント
+      if (!canceled) {
+        // unlistenに保持しておく
+        unlisten = fn;
+      }
+      // アンマウント済み
+      else {
+        // メッセージリスナーを登録解除する
+        fn();
+      }
+    });
+
+    // チャット画面コンポーネントアンマウント時
+    return () => {
+      // アンマウント
+      canceled = true;
+      // メッセージリスナーを登録解除する
+      if (unlisten) {
+        unlisten();
+      }
+    };
+  }, []);
 
   // メッセージに変更があった場合
   useEffect(() => {
@@ -53,6 +93,8 @@ export function ChatPage() {
     } finally {
       // メッセージ送信終了
       setIsSending(false);
+      // 受信中メッセージをクリア
+      setRecevingMessage("");
     }
   };
 
@@ -84,6 +126,7 @@ export function ChatPage() {
           <ChatHistory
             messages={messages}
             isSending={isSending}
+            receivingMessage={receivingMessage}
             lastMessageRef={lastMessageRef}
           />
         </Box>
