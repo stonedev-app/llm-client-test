@@ -1,4 +1,6 @@
 import { Box, Paper, Typography } from "@mui/material";
+import Markdown from "react-markdown";
+
 import { Message } from "../../types/Message";
 
 /**
@@ -78,15 +80,25 @@ export default function ChatHistory({
               maxWidth: "70%",
             }}
           >
-            <Typography
-              variant="body2"
-              sx={{
-                whiteSpace: "pre-wrap",
-                wordBreak: "break-word",
-              }}
-            >
-              {msg.text}
-            </Typography>
+            {/* LLMからの応答は、マークダウンとして解釈する */}
+            {msg.fromMe ? (
+              <Typography
+                variant="body2"
+                sx={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+              >
+                {msg.text}
+              </Typography>
+            ) : (
+              <Box
+                sx={{
+                  fontSize: "0.875rem",
+                  lineHeight: 1.43,
+                  "& *": { margin: 0 },
+                }}
+              >
+                <Markdown>{msg.text}</Markdown>
+              </Box>
+            )}
           </Paper>
         </Box>
       ))}
