@@ -1,4 +1,5 @@
 import { Box, Paper, Typography } from "@mui/material";
+import { open } from "@tauri-apps/plugin-shell";
 import Markdown from "react-markdown";
 
 import { Message } from "../../types/Message";
@@ -104,7 +105,35 @@ export default function ChatHistory({
                   "& *": { margin: 0 },
                 }}
               >
-                <Markdown>{msg.text}</Markdown>
+                <Markdown
+                  components={{
+                    // アンカータグを上書きする
+                    a: ({ href, children }) => (
+                      <a
+                        href={href}
+                        onClick={async (e) => {
+                          // アプリ内遷移を止める
+                          e.preventDefault();
+                          if (href) {
+                            try {
+                              // 外部ブラウザで開く
+                              await open(href);
+                            } catch (err) {
+                              console.error("リンクを開けませんでした:", err);
+                            }
+                          }
+                        }}
+                        style={{
+                          color: "#1976d2",
+                        }}
+                      >
+                        {children}
+                      </a>
+                    ),
+                  }}
+                >
+                  {msg.text}
+                </Markdown>
               </Box>
             )}
           </Paper>
