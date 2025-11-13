@@ -91,6 +91,7 @@ export default function ChatHistory({
             ) : (
               <Box
                 sx={{
+                  wordBreak: "break-word",
                   fontSize: "0.875rem",
                   lineHeight: 1.43,
                   "& *": { margin: 0 },
