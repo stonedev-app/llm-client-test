@@ -26,3 +26,4 @@ reqwest = { version = "0.12.24", features = ["json", "stream"] }
 tokio-util = "0.7.17"
 futures-util = "0.3.31"
 tokio = "1.48.0"
+tauri-plugin-shell = "2.3.3"

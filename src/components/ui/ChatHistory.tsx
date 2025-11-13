@@ -1,4 +1,5 @@
 import { Box, Paper, Typography } from "@mui/material";
+import { open } from "@tauri-apps/plugin-shell";
 import Markdown from "react-markdown";
 
 import { Message } from "../../types/Message";
@@ -80,23 +81,59 @@ export default function ChatHistory({
               maxWidth: "70%",
             }}
           >
-            {/* LLMからの応答は、マークダウンとして解釈する */}
+            {/* ユーザーの入力かLLMの応答であるか */}
             {msg.fromMe ? (
+              // ユーザーの入力はただの文字列扱いとする
               <Typography
                 variant="body2"
+                // 改行は改行扱いで表示、長い文字列は強制的に折り返し
                 sx={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
               >
                 {msg.text}
               </Typography>
             ) : (
+              // LLMからの応答は、マークダウンとして解釈する
               <Box
                 sx={{
+                  // 長い文字列を強制的に折り返し
+                  wordBreak: "break-word",
+                  // Typographyのvariant="body2"相当のフォントサイズを設定
                   fontSize: "0.875rem",
+                  // Typographyのvariant="body2"相当の行間を設定
                   lineHeight: 1.43,
+                  // マークダウンの不要なマージンを除去
                   "& *": { margin: 0 },
                 }}
               >
-                <Markdown>{msg.text}</Markdown>
+                <Markdown
+                  components={{
+                    // アンカータグを上書きする
+                    a: ({ href, children }) => (
+                      <a
+                        href={href}
+                        onClick={async (e) => {
+                          // アプリ内遷移を止める
+                          e.preventDefault();
+                          if (href) {
+                            try {
+                              // 外部ブラウザで開く
+                              await open(href);
+                            } catch (err) {
+                              console.error("リンクを開けませんでした:", err);
+                            }
+                          }
+                        }}
+                        style={{
+                          color: "#1976d2",
+                        }}
+                      >
+                        {children}
+                      </a>
+                    ),
+                  }}
+                >
+                  {msg.text}
+                </Markdown>
               </Box>
             )}
           </Paper>
