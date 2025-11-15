@@ -24,10 +24,10 @@ pub async fn ollama_api_chat(app: AppHandle, messages: Vec<MessageDTO>) -> Resul
 
     // プロキシの設定されていると向き先がlocalhostでもプロキシ経由しようとするので、no_proxyを追加
     // クライアント生成
-    let client = match Client::builder().no_proxy().build() {
-        Ok(c) => c,
-        Err(e) => return Err(format!("クライアント生成失敗: {}", e.to_string())),
-    };
+    let client = Client::builder()
+        .no_proxy()
+        .build()
+        .map_err(|e| format!("クライアント生成失敗: {}", e))?;
 
     // messages を ollama API 用の形式に変換
     let api_messages: Vec<serde_json::Value> = messages
@@ -50,15 +50,12 @@ pub async fn ollama_api_chat(app: AppHandle, messages: Vec<MessageDTO>) -> Resul
     });
 
     // ollamaにリクエスト
-    let res = match client
+    let res = client
         .post("http://localhost:11434/api/chat")
         .json(&body)
         .send()
         .await
-    {
-        Ok(response) => response,
-        Err(e) => return Err(format!("接続失敗: {}", e.to_string())),
-    };
+        .map_err(|e| format!("接続失敗: {}", e))?;
 
     // HTTPステータスを取得
     let http_status = res.status();
