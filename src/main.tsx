@@ -9,9 +9,16 @@ function forwardConsole(
   logger: (message: string) => Promise<void>
 ) {
   const original = console[fnName];
-  console[fnName] = (message) => {
-    original(message);
-    logger(message);
+  console[fnName] = (...args) => {
+    // 元の console.xxx をそのまま動作させる
+    original(...args);
+
+    // args を文字列化して Tauri ログへ
+    const msg = args
+      .map((a) => (typeof a === "string" ? a : JSON.stringify(a, null, 2)))
+      .join(" ");
+
+    logger(msg);
   };
 }
 
