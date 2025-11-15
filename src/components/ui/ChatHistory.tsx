@@ -28,7 +28,7 @@ interface ChatHistoryProps {
  * @param props.lastMessageRef 最後のメッセージへの参照
  * @returns JSX要素
  */
-export default function ChatHistory({
+export function ChatHistory({
   messages,
   isSending,
   receivingMessage,
@@ -46,6 +46,7 @@ export default function ChatHistory({
       // 受信中メッセージを設定。未受信の場合は「入力中…」を設定
       text: receivingMessage || "入力中…",
       fromMe: false,
+      error: false,
     });
   }
 
