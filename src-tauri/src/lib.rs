@@ -15,19 +15,39 @@ use llm::ollama_api_chat;
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    // ログ設定
-    // デバックモード
-    let level = if cfg!(debug_assertions) {
-        log::LevelFilter::Debug
-    }
-    // リリースモード
-    else {
-        log::LevelFilter::Info
+    // ログレベル、デバッグ対象
+    let (level, targets) = if cfg!(debug_assertions) {
+        // デバッグ時
+        (
+            // Debugレベル
+            log::LevelFilter::Debug,
+            // 出力対象 コンソール、ログファイル
+            vec![
+                tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::Stdout),
+                tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::LogDir {
+                    file_name: None,
+                }),
+            ],
+        )
+    } else {
+        // リリース時
+        (
+            // Infoレベル
+            log::LevelFilter::Info,
+            // 出力対象 ログファイル
+            vec![tauri_plugin_log::Target::new(
+                tauri_plugin_log::TargetKind::LogDir { file_name: None },
+            )],
+        )
     };
 
     tauri::Builder::default()
         .plugin(
             tauri_plugin_log::Builder::new()
+                // ログ対象をクリア
+                .clear_targets()
+                // ログ対象を設定
+                .targets(targets)
                 // ログレベルを指定
                 .level(level)
                 // ログ最大ファイルサイズを設定
