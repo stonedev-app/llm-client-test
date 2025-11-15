@@ -28,7 +28,7 @@ interface ChatHistoryProps {
  * @param props.lastMessageRef 最後のメッセージへの参照
  * @returns JSX要素
  */
-export default function ChatHistory({
+export function ChatHistory({
   messages,
   isSending,
   receivingMessage,

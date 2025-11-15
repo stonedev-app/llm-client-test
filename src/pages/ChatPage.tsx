@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { Box } from "@mui/material";
 import { listen } from "@tauri-apps/api/event";
 
-import ChatHistory from "../components/ui/ChatHistory";
-import ChatInput from "../components/ui/ChatInput";
+import { ChatHistory } from "../components/ui/ChatHistory";
+import { ChatInput } from "../components/ui/ChatInput";
 import { Message } from "../types/Message";
 import { llm } from "../api/llm";
 import { Events } from "../tauri/constants";

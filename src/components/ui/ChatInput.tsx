@@ -26,7 +26,7 @@ interface ChatInputProps {
  * @param props.isSending 送信中
  * @returns JSX要素
  */
-export default function ChatInput({ onSend, isSending }: ChatInputProps) {
+export function ChatInput({ onSend, isSending }: ChatInputProps) {
   // メッセージ
   const [message, setMessage] = useState("");
 
