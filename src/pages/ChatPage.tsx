@@ -81,7 +81,6 @@ export function ChatPage() {
           id: messages.length + 1,
           text: message,
           fromMe: true,
-          error: false,
         },
       ];
       // メッセージ配列を設定

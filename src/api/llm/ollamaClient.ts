@@ -19,7 +19,6 @@ export const requestApiChat = async (
         id: prev.length + 1,
         text: resMessage,
         fromMe: false,
-        error: false,
       },
     ]);
   } catch (err) {
