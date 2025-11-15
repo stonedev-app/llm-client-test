@@ -24,10 +24,10 @@ pub async fn ollama_api_chat(app: AppHandle, messages: Vec<MessageDTO>) -> Resul
 
     // プロキシの設定されていると向き先がlocalhostでもプロキシ経由しようとするので、no_proxyを追加
     // クライアント生成
-    let client = Client::builder()
-        .no_proxy()
-        .build()
-        .map_err(|e| format!("クライアント生成失敗: {}", e))?;
+    let client = Client::builder().no_proxy().build().map_err(|e| {
+        log::error!("Tauri command `ollama_api_chat` failed: {}", e);
+        format!("クライアント生成失敗: {}", e)
+    })?;
 
     // messages を ollama API 用の形式に変換
     let api_messages: Vec<serde_json::Value> = messages
@@ -55,7 +55,10 @@ pub async fn ollama_api_chat(app: AppHandle, messages: Vec<MessageDTO>) -> Resul
         .json(&body)
         .send()
         .await
-        .map_err(|e| format!("接続失敗: {}", e))?;
+        .map_err(|e| {
+            log::error!("Tauri command `ollama_api_chat` failed: {}", e);
+            format!("接続失敗: {}", e)
+        })?;
 
     // HTTPステータスを取得
     let http_status = res.status();
@@ -74,16 +77,21 @@ pub async fn ollama_api_chat(app: AppHandle, messages: Vec<MessageDTO>) -> Resul
     let mut res_message = String::new();
 
     // 1行ずつレスポンスを取得する
-    while let Some(line) = lines
-        .next_line()
-        .await
-        .map_err(|e| format!("受信失敗: {}", e.to_string()))?
-    {
+    while let Some(line) = lines.next_line().await.map_err(|e| {
+        log::error!("Tauri command `ollama_api_chat` failed: {}", e);
+        format!("受信失敗: {}", e.to_string())
+    })? {
         // HTTPステータスが200番台でない場合、1行のみでErrorResponse
         if !http_status.is_success() {
             // JSONとして解析する
-            let error_res: ErrorResponse =
-                serde_json::from_str(&line).map_err(|e| format!("JSON解析失敗: {}", e))?;
+            let error_res: ErrorResponse = serde_json::from_str(&line).map_err(|e| {
+                log::error!("Tauri command `ollama_api_chat` failed: {}", e);
+                format!("JSON解析失敗: {}", e)
+            })?;
+            log::error!(
+                "Tauri command `ollama_api_chat` failed: {}",
+                error_res.error
+            );
             // エラーメッセージを返却する
             return Err(format!("Ollamaエラー: {}", error_res.error));
         }
@@ -91,19 +99,25 @@ pub async fn ollama_api_chat(app: AppHandle, messages: Vec<MessageDTO>) -> Resul
         // 途中、ErrorResponseで終了の場合あり
         else {
             // JSONとして解析する
-            let res: ChatOrErrorResponse =
-                serde_json::from_str(&line).map_err(|e| format!("JSON解析失敗: {}", e))?;
+            let res: ChatOrErrorResponse = serde_json::from_str(&line).map_err(|e| {
+                log::error!("Tauri command `ollama_api_chat` failed: {}", e);
+                format!("JSON解析失敗: {}", e)
+            })?;
             match res {
                 // 正常レスポンスの場合
                 ChatOrErrorResponse::Chat(chat) => {
                     // フロントに受信したメッセージを送信
                     app.emit("receving_message", chat.message.content.clone())
-                        .map_err(|e| format!("ストリームエラー: {}", e))?;
+                        .map_err(|e| {
+                            log::error!("Tauri command `ollama_api_chat` failed: {}", e);
+                            format!("ストリームエラー: {}", e)
+                        })?;
                     // レスポンスメッセージに受信したメッセージを追加する
                     res_message.push_str(&chat.message.content);
                 }
                 // エラーレスポンスの場合
                 ChatOrErrorResponse::Error(err) => {
+                    log::error!("Tauri command `ollama_api_chat` failed: {}", err.error);
                     // エラーメッセージを返却する
                     return Err(format!("Ollamaエラー: {}", err.error));
                 }
