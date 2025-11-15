@@ -10,6 +10,12 @@ use crate::front::front_types::MessageDTO;
 
 #[tauri::command]
 pub async fn ollama_api_chat(app: AppHandle, messages: Vec<MessageDTO>) -> Result<String, String> {
+    // 開始ログ
+    log::info!(
+        "Tauri command `ollama_api_chat` started. messages: {}",
+        messages.len()
+    );
+
     // 事前準備
     // ollamaのコンテナを起動
     // docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
@@ -107,6 +113,12 @@ pub async fn ollama_api_chat(app: AppHandle, messages: Vec<MessageDTO>) -> Resul
             }
         }
     }
+
+    // 正常終了時ログ
+    log::info!(
+        "Tauri command `ollama_api_chat` finished Ok. response_length={}",
+        res_message.len()
+    );
 
     // レスポンスメッセージを返却する
     return Ok(res_message);
