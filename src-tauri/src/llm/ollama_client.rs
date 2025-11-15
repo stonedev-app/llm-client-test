@@ -85,7 +85,7 @@ pub async fn ollama_api_chat(app: AppHandle, messages: Vec<MessageDTO>) -> Resul
             let error_res: ErrorResponse =
                 serde_json::from_str(&line).map_err(|e| format!("JSON解析失敗: {}", e))?;
             // エラーメッセージを返却する
-            return Ok(format!("Ollamaエラー: {}", error_res.error));
+            return Err(format!("Ollamaエラー: {}", error_res.error));
         }
         // HTTPステータスが200番台の場合、少なくとも1行目はChatResponse
         // 途中、ErrorResponseで終了の場合あり
@@ -105,7 +105,7 @@ pub async fn ollama_api_chat(app: AppHandle, messages: Vec<MessageDTO>) -> Resul
                 // エラーレスポンスの場合
                 ChatOrErrorResponse::Error(err) => {
                     // エラーメッセージを返却する
-                    return Ok(format!("Ollamaエラー: {}", err.error));
+                    return Err(format!("Ollamaエラー: {}", err.error));
                 }
             }
         }
