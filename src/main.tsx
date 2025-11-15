@@ -15,7 +15,9 @@ function forwardConsole(
 
     // args を文字列化して Tauri ログへ
     const msg = args
+      // stringは余分なダブルクォートが追加されるのでそのまま。他はJSON文字列に変換。
       .map((a) => (typeof a === "string" ? a : JSON.stringify(a, null, 2)))
+      // スペースを追加、文字列に展開する
       .join(" ");
 
     logger(msg);
