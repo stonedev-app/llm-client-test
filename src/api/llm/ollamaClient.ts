@@ -1,11 +1,14 @@
 import { invoke } from "@tauri-apps/api/core";
 import { Dispatch, SetStateAction } from "react";
+
 import { Message } from "../../types/Message";
 import { Commands } from "../../tauri/constants";
+import { LLMApiError, LLMApiErrorTypeEnum } from "../../types/LLMApiError";
 
 export const requestApiChat = async (
   messages: Message[],
-  setMessages: Dispatch<SetStateAction<Message[]>>
+  setMessages: Dispatch<SetStateAction<Message[]>>,
+  systemError: Dispatch<SetStateAction<string | null>>
 ): Promise<void> => {
   try {
     // LLMリクエスト処理を呼び出す
@@ -19,19 +22,28 @@ export const requestApiChat = async (
         id: prev.length + 1,
         text: resMessage,
         fromMe: false,
-        error: false,
       },
     ]);
   } catch (err) {
-    // メッセージ配列にエラーメッセージを追加して再設定
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        text: err as string,
-        fromMe: false,
-        error: true,
-      },
-    ]);
+    // LLMApiError型にキャストする(※rustのエラーの型と型を合わせている)
+    const llmErr = err as LLMApiError;
+    // LLMApiエラーの場合
+    if (llmErr.kind === LLMApiErrorTypeEnum.Http) {
+      // メッセージ配列にエラーメッセージを追加して再設定
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: prev.length + 1,
+          text: llmErr.message,
+          fromMe: false,
+          error: true,
+        },
+      ]);
+    }
+    // その他ネットワークエラーなどの場合
+    else {
+      // システムエラーメッセージ設定する
+      systemError(llmErr.message);
+    }
   }
 };

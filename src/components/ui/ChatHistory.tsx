@@ -46,7 +46,6 @@ export function ChatHistory({
       // 受信中メッセージを設定。未受信の場合は「入力中…」を設定
       text: receivingMessage || "入力中…",
       fromMe: false,
-      error: false,
     });
   }
 

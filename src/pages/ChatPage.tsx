@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Box } from "@mui/material";
+import { Alert, Box } from "@mui/material";
 import { listen } from "@tauri-apps/api/event";
 
 import { ChatHistory } from "../components/ui/ChatHistory";
@@ -20,6 +20,8 @@ export function ChatPage() {
   const [isSending, setIsSending] = useState(false);
   // 受信中メッセージ(ストリーミングメッセージ)
   const [receivingMessage, setRecevingMessage] = useState<string>("");
+  // システムエラー(ネットワークエラーなど)
+  const [systemError, setSystemError] = useState<string | null>(null);
 
   // チャット履歴の最後のメッセージ参照
   const lastMessageRef = useRef<HTMLDivElement>(null);
@@ -81,7 +83,6 @@ export function ChatPage() {
           id: messages.length + 1,
           text: message,
           fromMe: true,
-          error: false,
         },
       ];
       // メッセージ配列を設定
@@ -89,7 +90,8 @@ export function ChatPage() {
       // LLMにメッセージ送信
       await llm.ollama.requestApiChat(
         newMessages.map((msg) => ({ ...msg })),
-        setMessages
+        setMessages,
+        setSystemError
       );
     } finally {
       // メッセージ送信終了
@@ -132,6 +134,24 @@ export function ChatPage() {
           />
         </Box>
       )}
+
+      {/* システムエラーが発生した場合はアラートを表示 */}
+      {systemError && (
+        <Box sx={{ mb: 2 }}>
+          <Alert
+            sx={{
+              borderRadius: 3,
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+            }}
+            severity="error"
+            onClose={() => setSystemError(null)}
+          >
+            {systemError}
+          </Alert>
+        </Box>
+      )}
+
       {/* チャット入力欄 */}
       {/* チャット履歴がない場合は、画面中央(上下方向) */}
       <Box
