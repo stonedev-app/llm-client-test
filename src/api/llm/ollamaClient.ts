@@ -7,7 +7,8 @@ import { LLMApiError, LLMApiErrorTypeEnum } from "../../types/LLMApiError";
 
 export const requestApiChat = async (
   messages: Message[],
-  setMessages: Dispatch<SetStateAction<Message[]>>
+  setMessages: Dispatch<SetStateAction<Message[]>>,
+  systemError: Dispatch<SetStateAction<string | null>>
 ): Promise<void> => {
   try {
     // LLMリクエスト処理を呼び出す
@@ -41,7 +42,8 @@ export const requestApiChat = async (
     }
     // その他ネットワークエラーなどの場合
     else {
-      // TODO: エラーを画面のどこかに表示する
+      // システムエラーメッセージ設定する
+      systemError(llmErr.message);
     }
   }
 };
