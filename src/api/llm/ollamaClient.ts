@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction } from "react";
 
 import { Message } from "../../types/Message";
 import { Commands } from "../../tauri/constants";
-import { LLMApiError } from "../../types/LLMApiError";
+import { LLMApiError, LLMApiErrorTypeEnum } from "../../types/LLMApiError";
 
 export const requestApiChat = async (
   messages: Message[],
@@ -24,16 +24,24 @@ export const requestApiChat = async (
       },
     ]);
   } catch (err) {
+    // LLMApiError型にキャストする(※rustのエラーの型と型を合わせている)
     const llmErr = err as LLMApiError;
-    // メッセージ配列にエラーメッセージを追加して再設定
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        text: llmErr.message,
-        fromMe: false,
-        error: true,
-      },
-    ]);
+    // LLMApiエラーの場合
+    if (llmErr.kind === LLMApiErrorTypeEnum.Http) {
+      // メッセージ配列にエラーメッセージを追加して再設定
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: prev.length + 1,
+          text: llmErr.message,
+          fromMe: false,
+          error: true,
+        },
+      ]);
+    }
+    // その他ネットワークエラーなどの場合
+    else {
+      // TODO: エラーを画面のどこかに表示する
+    }
   }
 };
