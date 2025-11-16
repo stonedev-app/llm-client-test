@@ -1,7 +1,9 @@
 import { invoke } from "@tauri-apps/api/core";
 import { Dispatch, SetStateAction } from "react";
+
 import { Message } from "../../types/Message";
 import { Commands } from "../../tauri/constants";
+import { LLMApiError } from "../../types/LLMApiError";
 
 export const requestApiChat = async (
   messages: Message[],
@@ -22,12 +24,13 @@ export const requestApiChat = async (
       },
     ]);
   } catch (err) {
+    const llmErr = err as LLMApiError;
     // メッセージ配列にエラーメッセージを追加して再設定
     setMessages((prev) => [
       ...prev,
       {
         id: prev.length + 1,
-        text: err as string,
+        text: llmErr.message,
         fromMe: false,
         error: true,
       },
