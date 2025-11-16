@@ -141,6 +141,7 @@ export function ChatPage() {
           <Alert
             sx={{
               borderRadius: 3,
+              whiteSpace: "pre-wrap",
               wordBreak: "break-word",
             }}
             severity="error"
