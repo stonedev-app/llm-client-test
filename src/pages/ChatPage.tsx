@@ -141,6 +141,7 @@ export function ChatPage() {
           <Alert
             sx={{
               borderRadius: 3,
+              wordBreak: "break-word",
             }}
             severity="error"
             onClose={() => setSystemError(null)}
