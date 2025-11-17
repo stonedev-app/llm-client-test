@@ -19,7 +19,7 @@ export function ChatPage() {
   // 送信中フラグ
   const [isSending, setIsSending] = useState(false);
   // 受信中メッセージ(ストリーミングメッセージ)
-  const [receivingMessage, setRecevingMessage] = useState<string>("");
+  const [receivingMessage, setReceivingMessage] = useState<string>("");
   // システムエラー(ネットワークエラーなど)
   const [systemError, setSystemError] = useState<string | null>(null);
 
@@ -34,9 +34,9 @@ export function ChatPage() {
     let canceled = false;
 
     // メッセージリスナーを登録する
-    listen<string>(Events.recevingMessage, (event) => {
+    listen<string>(Events.receivingMessage, (event) => {
       // ストリーミングで受け取ったメッセージを受信中メッセージに追加する
-      setRecevingMessage((prev) => prev + event.payload);
+      setReceivingMessage((prev) => prev + event.payload);
     }).then((fn) => {
       // マウント
       if (!canceled) {
@@ -97,7 +97,7 @@ export function ChatPage() {
       // メッセージ送信終了
       setIsSending(false);
       // 受信中メッセージをクリア
-      setRecevingMessage("");
+      setReceivingMessage("");
     }
   };
 

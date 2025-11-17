@@ -5,5 +5,5 @@ export const Commands = {
 
 // tauri イベント名
 export const Events = {
-  recevingMessage: "receving_message",
+  receivingMessage: "receiving_message",
 } as const;

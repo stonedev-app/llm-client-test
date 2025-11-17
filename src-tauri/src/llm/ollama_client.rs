@@ -139,7 +139,7 @@ pub async fn ollama_api_chat(
                 // 正常レスポンスの場合
                 ChatOrErrorResponse::Chat(chat) => {
                     // フロントに受信したメッセージを送信
-                    app.emit("receving_message", chat.message.content.clone())
+                    app.emit("receiving_message", chat.message.content.clone())
                         .map_err(|e| {
                             // エラーログ
                             log::error!("Tauri command `ollama_api_chat` failed: {}", e);
