@@ -5,7 +5,7 @@ use tauri::{AppHandle, Emitter};
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio_util::io::StreamReader;
 
-use super::ollama_types::{ChatOrErrorResponse, ErrorResponse};
+use super::types::{ChatOrErrorResponse, ErrorResponse};
 use crate::front::front_types::{LLMApiErrorDTO, LLMApiErrorType, MessageDTO};
 
 #[tauri::command]
