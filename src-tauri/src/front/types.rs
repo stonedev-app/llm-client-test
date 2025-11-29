@@ -42,3 +42,15 @@ pub enum LLMApiErrorType {
     /// JSONパースエラー
     Parse,
 }
+
+/// llm_err
+///
+/// LLM APIエラー作成
+pub fn llm_err(kind: LLMApiErrorType, message: &str, e: impl std::fmt::Display) -> LLMApiErrorDTO {
+    // メッセージ作成
+    let msg = format!("{}: {}", message, e);
+    // エラーログ出力
+    log::error!("{}", msg);
+    // LLM APIエラー 作成・返却
+    LLMApiErrorDTO { kind, message: msg }
+}
