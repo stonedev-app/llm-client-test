@@ -1,7 +1,7 @@
 mod front;
 mod llm;
 
-use llm::ollama_api_chat;
+use llm::ollama::client::ollama_api_chat;
 
 // ログ出力先
 // Linux    $XDG_DATA_HOME/{bundleIdentifier}/logs

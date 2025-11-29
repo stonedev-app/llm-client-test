@@ -5,8 +5,8 @@ use tauri::{AppHandle, Emitter};
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio_util::io::StreamReader;
 
-use super::ollama_types::{ChatOrErrorResponse, ErrorResponse};
-use crate::front::front_types::{LLMApiErrorDTO, LLMApiErrorType, MessageDTO};
+use super::types::{ChatOrErrorResponse, ErrorResponse};
+use crate::front::types::{LLMApiErrorDTO, LLMApiErrorType, MessageDTO};
 
 #[tauri::command]
 pub async fn ollama_api_chat(
