@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Alert, Box } from "@mui/material";
+import { Alert, Box, AppBar, Toolbar, Typography } from "@mui/material";
 import { listen } from "@tauri-apps/api/event";
 
 import { ChatHistory } from "../components/ui/ChatHistory";
@@ -110,58 +110,78 @@ export function ChatPage() {
         display: "flex",
         flexDirection: "column",
         height: "100vh",
-        p: 4,
-        mx: "auto",
-        maxWidth: "700px",
       }}
     >
-      {hasMessages && (
-        // メッセージ配列がある場合は、チャット履歴を表示
-        // チャット入力欄は画面下に移動
-        <Box
-          sx={{
-            display: "flex",
-            flex: 1,
-            overflowY: "auto",
-            mb: 2,
-          }}
-        >
-          <ChatHistory
-            messages={messages}
-            isSending={isSending}
-            receivingMessage={receivingMessage}
-            lastMessageRef={lastMessageRef}
-          />
-        </Box>
-      )}
+      {/* ヘッダー */}
+      <AppBar position="static" sx={{ backgroundColor: "primary.main" }}>
+        <Toolbar>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            LLM Client Test
+          </Typography>
+        </Toolbar>
+      </AppBar>
 
-      {/* システムエラーが発生した場合はアラートを表示 */}
-      {systemError && (
-        <Box sx={{ mb: 2 }}>
-          <Alert
-            sx={{
-              borderRadius: 3,
-              whiteSpace: "pre-wrap",
-              wordBreak: "break-word",
-            }}
-            severity="error"
-            onClose={() => setSystemError(null)}
-          >
-            {systemError}
-          </Alert>
-        </Box>
-      )}
-
-      {/* チャット入力欄 */}
-      {/* チャット履歴がない場合は、画面中央(上下方向) */}
+      {/* メインコンテンツ */}
       <Box
         sx={{
-          flex: !hasMessages ? 1 : 0,
           display: "flex",
-          alignItems: !hasMessages ? "center" : "stretch",
+          flexDirection: "column",
+          flex: 1,
+          p: 4,
+          overflowY: "auto",
+          mx: "auto",
+          maxWidth: "700px",
+          width: "100%",
         }}
       >
-        <ChatInput onSend={handleSend} isSending={isSending} />
+        {hasMessages && (
+          // メッセージ配列がある場合は、チャット履歴を表示
+          // チャット入力欄は画面下に移動
+          <Box
+            sx={{
+              display: "flex",
+              flex: 1,
+              overflowY: "auto",
+              mb: 2,
+            }}
+          >
+            <ChatHistory
+              messages={messages}
+              isSending={isSending}
+              receivingMessage={receivingMessage}
+              lastMessageRef={lastMessageRef}
+            />
+          </Box>
+        )}
+
+        {/* システムエラーが発生した場合はアラートを表示 */}
+        {systemError && (
+          <Box sx={{ mb: 2 }}>
+            <Alert
+              sx={{
+                borderRadius: 3,
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+              }}
+              severity="error"
+              onClose={() => setSystemError(null)}
+            >
+              {systemError}
+            </Alert>
+          </Box>
+        )}
+
+        {/* チャット入力欄 */}
+        {/* チャット履歴がない場合は、画面中央(上下方向) */}
+        <Box
+          sx={{
+            flex: !hasMessages ? 1 : 0,
+            display: "flex",
+            alignItems: !hasMessages ? "center" : "stretch",
+          }}
+        >
+          <ChatInput onSend={handleSend} isSending={isSending} />
+        </Box>
       </Box>
     </Box>
   );
