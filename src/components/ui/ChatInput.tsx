@@ -66,8 +66,12 @@ export function ChatInput({ onSend, isSending }: ChatInputProps) {
       <TextField
         fullWidth
         multiline
-        maxRows={3}
-        placeholder={isSending ? "応答待機中..." : "メッセージを入力..."}
+        maxRows={4}
+        placeholder={
+          isSending
+            ? "応答待機中..."
+            : `メッセージを入力... (${isMac ? "Cmd" : "Ctrl"} + Enter で送信)`
+        }
         disabled={isSending}
         variant="outlined"
         size="small"
