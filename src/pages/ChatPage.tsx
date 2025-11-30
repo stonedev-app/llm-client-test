@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { Alert, Box, AppBar, Toolbar, Typography } from "@mui/material";
+import { Alert, Box } from "@mui/material";
 import { listen } from "@tauri-apps/api/event";
 
+import { Header } from "../components/ui/Header";
 import { ChatHistory } from "../components/ui/ChatHistory";
 import { ChatInput } from "../components/ui/ChatInput";
 import { Message } from "../types/Message";
@@ -113,13 +114,7 @@ export function ChatPage() {
       }}
     >
       {/* ヘッダー */}
-      <AppBar position="static" sx={{ backgroundColor: "primary.main" }}>
-        <Toolbar>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            LLM Client Test
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <Header />
 
       {/* メインコンテンツ */}
       <Box
