@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { type } from "@tauri-apps/plugin-os";
 import {
   Box,
   TextField,
@@ -29,6 +30,14 @@ interface ChatInputProps {
 export function ChatInput({ onSend, isSending }: ChatInputProps) {
   // メッセージ
   const [message, setMessage] = useState("");
+  // macOS判定フラグ
+  const [isMac, setIsMac] = useState(false);
+
+  // コンポーネントマウント時にOS判定
+  useEffect(() => {
+    const osType = type();
+    setIsMac(osType === "macos");
+  }, []);
 
   // メッセージ送信イベント
   const handleSend = () => {
@@ -57,8 +66,12 @@ export function ChatInput({ onSend, isSending }: ChatInputProps) {
       <TextField
         fullWidth
         multiline
-        maxRows={3}
-        placeholder={isSending ? "応答待機中..." : "メッセージを入力..."}
+        maxRows={4}
+        placeholder={
+          isSending
+            ? "応答待機中..."
+            : `メッセージを入力... (${isMac ? "Cmd" : "Ctrl"} + Enter で送信)`
+        }
         disabled={isSending}
         variant="outlined"
         size="small"
@@ -66,12 +79,14 @@ export function ChatInput({ onSend, isSending }: ChatInputProps) {
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            // Shift + Enterの場合はメッセージ送信
-            if (e.shiftKey) {
+            // OSに応じた修飾キー判定
+            const shouldSend = isMac ? e.metaKey : e.ctrlKey;
+            // Macの場合はCmd+Enter、その他OSの場合はCtrl+Enterで送信
+            if (shouldSend) {
               e.preventDefault(); // 改行コード入力は抑制
               handleSend();
             }
-            // Enterキー入力の場合は改行
+            // Enterキー単体入力の場合は改行
           }
         }}
         sx={{
