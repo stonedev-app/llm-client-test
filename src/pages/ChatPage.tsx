@@ -93,6 +93,7 @@ export function ChatPage() {
       setMessages(newMessages);
       // LLMにメッセージ送信
       await llm.ollama.requestApiChat(
+        selectedModel,
         newMessages.map((msg) => ({ ...msg })),
         setMessages,
         setSystemError

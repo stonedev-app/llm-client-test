@@ -6,6 +6,7 @@ import { Commands } from "../../tauri/constants";
 import { LLMApiError, LLMApiErrorTypeEnum } from "../../types/LLMApiError";
 
 export const requestApiChat = async (
+  model: string,
   messages: Message[],
   setMessages: Dispatch<SetStateAction<Message[]>>,
   systemError: Dispatch<SetStateAction<string | null>>
@@ -13,6 +14,7 @@ export const requestApiChat = async (
   try {
     // LLMリクエスト処理を呼び出す
     const resMessage = await invoke<string>(Commands.ollamaApiChat, {
+      model,
       messages,
     });
     // メッセージ配列に応答メッセージを追加して再設定

@@ -11,6 +11,7 @@ use crate::front::types::{llm_err, LLMApiErrorDTO, LLMApiErrorType, MessageDTO};
 #[tauri::command]
 pub async fn ollama_api_chat(
     app: AppHandle,
+    model: String,
     messages: Vec<MessageDTO>,
 ) -> Result<String, LLMApiErrorDTO> {
     // 開始ログ
@@ -47,9 +48,9 @@ pub async fn ollama_api_chat(
 
     // jsonリクエスト内容
     let body = json!({
-        "model": "gemma3:1b-it-qat",    // モデルは固定値
-        "messages": api_messages,
-        "stream": true                 // ストリーミング有効
+        "model": model,             // モデル名
+        "messages": api_messages,   // メッセージ
+        "stream": true              // ストリーミング有効
     });
 
     // ollamaにリクエスト
