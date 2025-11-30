@@ -55,6 +55,9 @@ export function Header({ selectedModel, onModelChange }: HeaderProps) {
               "&:hover .MuiOutlinedInput-notchedOutline": {
                 borderColor: "rgba(255, 255, 255, 0.7)",
               },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "rgba(255, 255, 255, 0.5)",
+              },
               "& .MuiSvgIcon-root": {
                 color: "white",
               },
