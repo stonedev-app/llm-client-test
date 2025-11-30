@@ -23,6 +23,9 @@ export function ChatPage() {
   const [receivingMessage, setReceivingMessage] = useState<string>("");
   // システムエラー(ネットワークエラーなど)
   const [systemError, setSystemError] = useState<string | null>(null);
+  // 選択されたモデル
+  const [selectedModel, setSelectedModel] =
+    useState<string>("gemma3:1b-it-qat");
 
   // チャット履歴の最後のメッセージ参照
   const lastMessageRef = useRef<HTMLDivElement>(null);
@@ -114,7 +117,7 @@ export function ChatPage() {
       }}
     >
       {/* ヘッダー */}
-      <Header />
+      <Header selectedModel={selectedModel} onModelChange={setSelectedModel} />
 
       {/* メインコンテンツ */}
       <Box
