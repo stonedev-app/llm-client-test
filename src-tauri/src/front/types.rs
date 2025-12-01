@@ -37,8 +37,8 @@ pub enum LLMApiErrorType {
     Network,
     /// HTTPステータス異常(LLMのエラー)
     Http,
-    /// ストリーミング中のエラー
-    Stream,
+    /// 受信中エラー
+    Receive,
     /// JSONパースエラー
     Parse,
 }

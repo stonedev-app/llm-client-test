@@ -16,8 +16,8 @@ export enum LLMApiErrorTypeEnum {
   Network = "network",
   /** HTTPステータス異常 (LLM のエラー) */
   Http = "http",
-  /** ストリーミング中に発生したエラー */
-  Stream = "stream",
+  /** 受信中エラー */
+  Receive = "receive",
   /** JSON 解析失敗などのパースエラー */
   Parse = "parse",
 }
