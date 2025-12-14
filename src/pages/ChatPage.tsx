@@ -5,7 +5,7 @@ import { Alert, Box } from "@mui/material";
 import { Header } from "../components/ui/Header";
 import { ChatHistory } from "../components/ui/ChatHistory";
 import { ChatInput } from "../components/ui/ChatInput";
-// フック
+// カスタムフック
 import { useMessageListener } from "../hooks/useMessageListener";
 import { useAutoScroll } from "../hooks/useAutoScroll";
 // 型定義
@@ -32,10 +32,10 @@ export function ChatPage() {
   // チャット履歴の最後のメッセージ参照
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
+  // カスタムフック
   // 受信中メッセージ(ストリーミングメッセージ)
   const { message: receivingMessage, reset: resetMessage } =
     useMessageListener();
-
   // 自動スクロール
   useAutoScroll(lastMessageRef, messages);
 
