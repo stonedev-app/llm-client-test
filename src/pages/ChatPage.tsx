@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Alert, Box } from "@mui/material";
 
 // コンポーネント
@@ -7,6 +7,7 @@ import { ChatHistory } from "../components/ui/ChatHistory";
 import { ChatInput } from "../components/ui/ChatInput";
 // フック
 import { useMessageListener } from "../hooks/useMessageListener";
+import { useAutoScroll } from "../hooks/useAutoScroll";
 // 型定義
 import { Message } from "../types/Message";
 // API
@@ -35,11 +36,8 @@ export function ChatPage() {
   const { message: receivingMessage, reset: resetMessage } =
     useMessageListener();
 
-  // メッセージに変更があった場合
-  useEffect(() => {
-    // 最後のメッセージにまでスクロール
-    lastMessageRef?.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  // 自動スクロール
+  useAutoScroll(lastMessageRef, messages);
 
   // メッセージ送信イベント
   const handleSend = async (message: string) => {
