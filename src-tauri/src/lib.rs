@@ -1,7 +1,7 @@
 mod front;
 mod llm;
 
-use crate::llm::ollama::client::{ollama_api_chat, ollama_api_tags};
+use crate::llm::ollama::{ollama_api_chat, ollama_api_tags};
 
 // ログ出力先
 // Linux    $XDG_DATA_HOME/{bundleIdentifier}/logs
