@@ -11,7 +11,7 @@ import { useAutoScroll } from "../hooks/useAutoScroll";
 // 型定義
 import { Message } from "../types/Message";
 // API
-import { llm } from "../api/llm";
+import { requestApiChat } from "../api/llm/ollama/requestApiChat";
 
 /**
  * チャット画面コンポーネント
@@ -60,7 +60,7 @@ export function ChatPage() {
       // メッセージ配列を設定
       setMessages(newMessages);
       // LLMにメッセージ送信
-      await llm.ollama.requestApiChat(
+      await requestApiChat(
         selectedModel,
         newMessages.map((msg) => ({ ...msg })),
         setMessages,

@@ -1,9 +1,9 @@
 import { invoke } from "@tauri-apps/api/core";
 import { Dispatch, SetStateAction } from "react";
 
-import { Message } from "../../types/Message";
-import { Commands } from "../../tauri/constants";
-import { LLMApiError, LLMApiErrorTypeEnum } from "../../types/LLMApiError";
+import { Message } from "../../../types/Message";
+import { Commands } from "../../../tauri/constants";
+import { LLMApiError, LLMApiErrorTypeEnum } from "../../../types/LLMApiError";
 
 export const requestApiChat = async (
   model: string,
