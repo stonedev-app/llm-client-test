@@ -5,6 +5,14 @@ import { Message } from "../../../types/Message";
 import { Commands } from "../../../tauri/constants";
 import { LLMApiError, LLMApiErrorTypeEnum } from "../../../types/LLMApiError";
 
+/**
+ * Ollama API チャットリクエスト関数
+ *
+ * @param model モデル名
+ * @param messages メッセージ配列
+ * @param setMessages メッセージ配列設定関数
+ * @param systemError システムエラー設定関数
+ */
 export const requestApiChat = async (
   model: string,
   messages: Message[],
