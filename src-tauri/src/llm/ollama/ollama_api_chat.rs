@@ -1,6 +1,5 @@
 use futures_util::stream::StreamExt;
 use reqwest::Client;
-use serde_json::json;
 use tauri::{AppHandle, Emitter};
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio_util::io::StreamReader;
@@ -37,7 +36,7 @@ pub async fn ollama_api_chat(
     let api_messages: Vec<serde_json::Value> = messages
         .into_iter()
         .map(|m| {
-            json!({
+            serde_json::json!({
                 // ユーザーが入力したメッセージはuser、LLMはassistantを設定する
                 "role": if m.from_me { "user" } else { "assistant" },
                 // ユーザー、又はLLMのメッセージ
@@ -47,7 +46,7 @@ pub async fn ollama_api_chat(
         .collect();
 
     // jsonリクエスト内容
-    let body = json!({
+    let body = serde_json::json!({
         "model": model,             // モデル名
         "messages": api_messages,   // メッセージ
         "stream": true              // ストリーミング有効
