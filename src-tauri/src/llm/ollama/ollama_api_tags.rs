@@ -1,17 +1,7 @@
 use reqwest::Client;
 
 use crate::front::types::{llm_err, LLMApiErrorDTO, LLMApiErrorType};
-use crate::llm::ollama::types::ErrorResponse;
-
-#[derive(serde::Deserialize)]
-pub struct ModelsResponse {
-    pub models: Vec<ModelInfo>,
-}
-
-#[derive(serde::Deserialize)]
-pub struct ModelInfo {
-    pub name: String,
-}
+use crate::llm::ollama::types::{ErrorResponse, ModelsResponse};
 
 #[tauri::command]
 pub async fn ollama_api_tags() -> Result<Vec<String>, LLMApiErrorDTO> {
