@@ -3,7 +3,10 @@ import { Dispatch, SetStateAction } from "react";
 
 import { Message } from "../../../types/Message";
 import { Commands } from "../../../tauri/constants";
-import { LLMApiError, LLMApiErrorTypeEnum } from "../../../types/LLMApiError";
+import {
+  LLMApiErrorTypeEnum,
+  normalizeLLMApiError,
+} from "../../../types/LLMApiError";
 
 /**
  * Ollama API チャットリクエスト関数
@@ -35,8 +38,8 @@ export const requestApiChat = async (
       },
     ]);
   } catch (err) {
-    // LLMApiError型にキャストする(※rustのエラーの型と型を合わせている)
-    const llmErr = err as LLMApiError;
+    // LLMApiError型に正規化する
+    const llmErr = normalizeLLMApiError(err);
     // LLMApiエラーの場合
     if (llmErr.kind === LLMApiErrorTypeEnum.Http) {
       // メッセージ配列にエラーメッセージを追加して再設定
