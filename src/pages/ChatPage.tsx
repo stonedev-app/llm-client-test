@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Alert, Box } from "@mui/material";
 
 // コンポーネント
@@ -6,6 +6,7 @@ import { Header } from "../components/ui/Header";
 import { ChatHistory } from "../components/ui/ChatHistory";
 import { ChatInput } from "../components/ui/ChatInput";
 // カスタムフック
+import { useModelNames } from "../hooks/useModelNames";
 import { useMessageListener } from "../hooks/useMessageListener";
 import { useAutoScroll } from "../hooks/useAutoScroll";
 // 型定義
@@ -26,16 +27,23 @@ export function ChatPage() {
   // システムエラー(ネットワークエラーなど)
   const [systemError, setSystemError] = useState<string | null>(null);
   // 選択されたモデル
-  const [selectedModel, setSelectedModel] =
-    useState<string>("gemma3:1b-it-qat");
+  const [selectedModel, setSelectedModel] = useState<string>("");
 
   // チャット履歴の最後のメッセージ参照
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
-  // カスタムフック
+  // モデル名一覧取得
+  const { modelNames } = useModelNames();
+  useEffect(() => {
+    if (modelNames.length > 0 && selectedModel === "") {
+      setSelectedModel(modelNames[0]);
+    }
+  }, [modelNames, selectedModel]);
+
   // 受信中メッセージ(ストリーミングメッセージ)
   const { message: receivingMessage, reset: resetMessage } =
     useMessageListener();
+
   // 自動スクロール
   useAutoScroll(lastMessageRef, messages);
 
@@ -86,7 +94,11 @@ export function ChatPage() {
       }}
     >
       {/* ヘッダー */}
-      <Header selectedModel={selectedModel} onModelChange={setSelectedModel} />
+      <Header
+        models={modelNames}
+        selectedModel={selectedModel}
+        onModelChange={setSelectedModel}
+      />
 
       {/* メインコンテンツ */}
       <Box

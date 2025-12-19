@@ -10,9 +10,11 @@ import {
 /**
  * ヘッダープロパティ
  * @property selectedModel 選択されたモデル
+ * @property models 利用可能なモデル一覧
  * @property onModelChange モデル変更イベントハンドラ
  */
 interface HeaderProps {
+  models: string[];
   selectedModel: string;
   onModelChange: (model: string) => void;
 }
@@ -20,19 +22,12 @@ interface HeaderProps {
 /**
  * ヘッダーコンポーネント
  * @param props ヘッダープロパティ
+ * @param props.models 利用可能なモデル一覧
  * @param props.selectedModel 選択されたモデル
  * @param props.onModelChange モデル変更イベントハンドラ
  * @returns JSX要素
  */
-export function Header({ selectedModel, onModelChange }: HeaderProps) {
-  // TODO: API経由で取得する
-  // 利用可能なモデル一覧
-  const availableModels = [
-    { value: "gemma3:1b-it-qat", label: "Gemma3 1B" },
-    { value: "llama2", label: "Llama2" },
-    { value: "mistral", label: "Mistral" },
-  ];
-
+export function Header({ models, selectedModel, onModelChange }: HeaderProps) {
   return (
     <AppBar position="static" sx={{ backgroundColor: "primary.main" }}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -63,9 +58,9 @@ export function Header({ selectedModel, onModelChange }: HeaderProps) {
               },
             }}
           >
-            {availableModels.map((model) => (
-              <MenuItem key={model.value} value={model.value}>
-                {model.label}
+            {models.map((model) => (
+              <MenuItem key={model} value={model}>
+                {model}
               </MenuItem>
             ))}
           </Select>
