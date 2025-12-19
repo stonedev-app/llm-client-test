@@ -1,12 +1,18 @@
 import { useState, useRef, useEffect } from "react";
 import { Alert, Box } from "@mui/material";
-import { listen } from "@tauri-apps/api/event";
 
+// コンポーネント
+import { Header } from "../components/ui/Header";
 import { ChatHistory } from "../components/ui/ChatHistory";
 import { ChatInput } from "../components/ui/ChatInput";
+// カスタムフック
+import { useModelNames } from "../hooks/useModelNames";
+import { useMessageListener } from "../hooks/useMessageListener";
+import { useAutoScroll } from "../hooks/useAutoScroll";
+// 型定義
 import { Message } from "../types/Message";
-import { llm } from "../api/llm";
-import { Events } from "../tauri/constants";
+// API
+import { requestApiChat } from "../api/llm/ollama/requestApiChat";
 
 /**
  * チャット画面コンポーネント
@@ -18,54 +24,28 @@ export function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   // 送信中フラグ
   const [isSending, setIsSending] = useState(false);
-  // 受信中メッセージ(ストリーミングメッセージ)
-  const [receivingMessage, setReceivingMessage] = useState<string>("");
   // システムエラー(ネットワークエラーなど)
   const [systemError, setSystemError] = useState<string | null>(null);
+  // 選択されたモデル
+  const [selectedModel, setSelectedModel] = useState<string>("");
 
   // チャット履歴の最後のメッセージ参照
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
-  // チャット画面コンポーネントマウント時
+  // モデル名一覧取得
+  const { modelNames } = useModelNames();
   useEffect(() => {
-    // メッセージリスナー登録解除
-    let unlisten: (() => void) | undefined;
-    // アンマウントフラグ(※React.StrictMode対策)
-    let canceled = false;
+    if (modelNames.length > 0 && selectedModel === "") {
+      setSelectedModel(modelNames[0]);
+    }
+  }, [modelNames, selectedModel]);
 
-    // メッセージリスナーを登録する
-    listen<string>(Events.receivingMessage, (event) => {
-      // ストリーミングで受け取ったメッセージを受信中メッセージに追加する
-      setReceivingMessage((prev) => prev + event.payload);
-    }).then((fn) => {
-      // マウント
-      if (!canceled) {
-        // unlistenに保持しておく
-        unlisten = fn;
-      }
-      // アンマウント済み
-      else {
-        // メッセージリスナーを登録解除する
-        fn();
-      }
-    });
+  // 受信中メッセージ(ストリーミングメッセージ)
+  const { message: receivingMessage, reset: resetMessage } =
+    useMessageListener();
 
-    // チャット画面コンポーネントアンマウント時
-    return () => {
-      // アンマウント
-      canceled = true;
-      // メッセージリスナーを登録解除する
-      if (unlisten) {
-        unlisten();
-      }
-    };
-  }, []);
-
-  // メッセージに変更があった場合
-  useEffect(() => {
-    // 最後のメッセージにまでスクロール
-    lastMessageRef?.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  // 自動スクロール
+  useAutoScroll(lastMessageRef, messages);
 
   // メッセージ送信イベント
   const handleSend = async (message: string) => {
@@ -88,7 +68,8 @@ export function ChatPage() {
       // メッセージ配列を設定
       setMessages(newMessages);
       // LLMにメッセージ送信
-      await llm.ollama.requestApiChat(
+      await requestApiChat(
+        selectedModel,
         newMessages.map((msg) => ({ ...msg })),
         setMessages,
         setSystemError
@@ -97,7 +78,7 @@ export function ChatPage() {
       // メッセージ送信終了
       setIsSending(false);
       // 受信中メッセージをクリア
-      setReceivingMessage("");
+      resetMessage();
     }
   };
 
@@ -110,58 +91,76 @@ export function ChatPage() {
         display: "flex",
         flexDirection: "column",
         height: "100vh",
-        p: 4,
-        mx: "auto",
-        maxWidth: "700px",
       }}
     >
-      {hasMessages && (
-        // メッセージ配列がある場合は、チャット履歴を表示
-        // チャット入力欄は画面下に移動
-        <Box
-          sx={{
-            display: "flex",
-            flex: 1,
-            overflowY: "auto",
-            mb: 2,
-          }}
-        >
-          <ChatHistory
-            messages={messages}
-            isSending={isSending}
-            receivingMessage={receivingMessage}
-            lastMessageRef={lastMessageRef}
-          />
-        </Box>
-      )}
+      {/* ヘッダー */}
+      <Header
+        models={modelNames}
+        selectedModel={selectedModel}
+        onModelChange={setSelectedModel}
+      />
 
-      {/* システムエラーが発生した場合はアラートを表示 */}
-      {systemError && (
-        <Box sx={{ mb: 2 }}>
-          <Alert
-            sx={{
-              borderRadius: 3,
-              whiteSpace: "pre-wrap",
-              wordBreak: "break-word",
-            }}
-            severity="error"
-            onClose={() => setSystemError(null)}
-          >
-            {systemError}
-          </Alert>
-        </Box>
-      )}
-
-      {/* チャット入力欄 */}
-      {/* チャット履歴がない場合は、画面中央(上下方向) */}
+      {/* メインコンテンツ */}
       <Box
         sx={{
-          flex: !hasMessages ? 1 : 0,
           display: "flex",
-          alignItems: !hasMessages ? "center" : "stretch",
+          flexDirection: "column",
+          flex: 1,
+          p: 4,
+          overflowY: "auto",
+          mx: "auto",
+          maxWidth: "700px",
+          width: "100%",
         }}
       >
-        <ChatInput onSend={handleSend} isSending={isSending} />
+        {hasMessages && (
+          // メッセージ配列がある場合は、チャット履歴を表示
+          // チャット入力欄は画面下に移動
+          <Box
+            sx={{
+              display: "flex",
+              flex: 1,
+              overflowY: "auto",
+              mb: 2,
+            }}
+          >
+            <ChatHistory
+              messages={messages}
+              isSending={isSending}
+              receivingMessage={receivingMessage}
+              lastMessageRef={lastMessageRef}
+            />
+          </Box>
+        )}
+
+        {/* システムエラーが発生した場合はアラートを表示 */}
+        {systemError && (
+          <Box sx={{ mb: 2 }}>
+            <Alert
+              sx={{
+                borderRadius: 3,
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+              }}
+              severity="error"
+              onClose={() => setSystemError(null)}
+            >
+              {systemError}
+            </Alert>
+          </Box>
+        )}
+
+        {/* チャット入力欄 */}
+        {/* チャット履歴がない場合は、画面中央(上下方向) */}
+        <Box
+          sx={{
+            flex: !hasMessages ? 1 : 0,
+            display: "flex",
+            alignItems: !hasMessages ? "center" : "stretch",
+          }}
+        >
+          <ChatInput onSend={handleSend} isSending={isSending} />
+        </Box>
       </Box>
     </Box>
   );

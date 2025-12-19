@@ -1,7 +1,7 @@
 mod front;
 mod llm;
 
-use llm::ollama::client::ollama_api_chat;
+use crate::llm::ollama::{ollama_api_chat, ollama_api_tags};
 
 // ログ出力先
 // Linux    $XDG_DATA_HOME/{bundleIdentifier}/logs
@@ -58,7 +58,7 @@ pub fn run() {
                 .build(),
         )
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![ollama_api_chat])
+        .invoke_handler(tauri::generate_handler![ollama_api_chat, ollama_api_tags])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

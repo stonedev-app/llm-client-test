@@ -1,16 +1,16 @@
 use futures_util::stream::StreamExt;
 use reqwest::Client;
-use serde_json::json;
 use tauri::{AppHandle, Emitter};
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio_util::io::StreamReader;
 
-use super::types::{ChatOrErrorResponse, ErrorResponse};
 use crate::front::types::{llm_err, LLMApiErrorDTO, LLMApiErrorType, MessageDTO};
+use crate::llm::ollama::types::{ChatOrErrorResponse, ErrorResponse};
 
 #[tauri::command]
 pub async fn ollama_api_chat(
     app: AppHandle,
+    model: String,
     messages: Vec<MessageDTO>,
 ) -> Result<String, LLMApiErrorDTO> {
     // 開始ログ
@@ -36,7 +36,7 @@ pub async fn ollama_api_chat(
     let api_messages: Vec<serde_json::Value> = messages
         .into_iter()
         .map(|m| {
-            json!({
+            serde_json::json!({
                 // ユーザーが入力したメッセージはuser、LLMはassistantを設定する
                 "role": if m.from_me { "user" } else { "assistant" },
                 // ユーザー、又はLLMのメッセージ
@@ -46,10 +46,10 @@ pub async fn ollama_api_chat(
         .collect();
 
     // jsonリクエスト内容
-    let body = json!({
-        "model": "gemma3:1b-it-qat",    // モデルは固定値
-        "messages": api_messages,
-        "stream": true                 // ストリーミング有効
+    let body = serde_json::json!({
+        "model": model,             // モデル名
+        "messages": api_messages,   // メッセージ
+        "stream": true              // ストリーミング有効
     });
 
     // ollamaにリクエスト
@@ -80,7 +80,7 @@ pub async fn ollama_api_chat(
     while let Some(line) = lines
         .next_line()
         .await
-        .map_err(|e| llm_err(LLMApiErrorType::Stream, "受信失敗", e))?
+        .map_err(|e| llm_err(LLMApiErrorType::Receive, "受信失敗", e))?
     {
         // HTTPステータスが200番台でない場合、1行のみでErrorResponse
         if !http_status.is_success() {
@@ -105,7 +105,7 @@ pub async fn ollama_api_chat(
                 ChatOrErrorResponse::Chat(chat) => {
                     // フロントに受信したメッセージを送信
                     app.emit("receiving_message", chat.message.content.clone())
-                        .map_err(|e| llm_err(LLMApiErrorType::Stream, "ストリームエラー", e))?;
+                        .map_err(|e| llm_err(LLMApiErrorType::Receive, "ストリームエラー", e))?;
                     // レスポンスメッセージに受信したメッセージを追加する
                     res_message.push_str(&chat.message.content);
                 }

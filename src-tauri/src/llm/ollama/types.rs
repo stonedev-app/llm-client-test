@@ -84,6 +84,60 @@ pub struct ErrorResponse {
 #[derive(serde::Deserialize, Debug)]
 #[serde(untagged)]
 pub enum ChatOrErrorResponse {
+    /// Chat response
     Chat(ChatResponse),
+
+    /// Error message
     Error(ErrorResponse),
+}
+
+/// List models resonse
+///
+/// 参考URL
+/// https://docs.ollama.com/api/tags
+#[allow(dead_code)]
+#[derive(Debug, Deserialize)]
+pub struct ModelsResponse {
+    /// List available models
+    pub models: Vec<Model>,
+}
+
+/// model
+#[allow(dead_code)]
+#[derive(Debug, Deserialize)]
+pub struct Model {
+    /// Model name
+    pub name: String,
+
+    /// Last modified timestamp in ISO 8601 format
+    pub modified_at: String,
+
+    /// Total size of the model on disk in bytes
+    pub size: u64,
+
+    /// SHA256 digest identifier of the model contents
+    pub digest: String,
+
+    /// Additional information about the model's format and family
+    pub details: Details,
+}
+
+/// details
+#[allow(dead_code)]
+#[derive(Debug, Deserialize)]
+pub struct Details {
+    /// Model file format (for example gguf)
+    pub format: String,
+
+    /// Primary model family (for example llama)
+    pub family: String,
+
+    /// All families the model belongs to, when applicable
+    pub families: Vec<String>,
+
+    /// Approximate parameter count label (for example 7B, 13B)
+    pub parameter_size: String,
+
+    /// Quantization level used (for example Q4_0)
+    pub quantization_level: String,
 }
