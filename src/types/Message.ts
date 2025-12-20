@@ -9,5 +9,5 @@ export interface Message {
   id: number;
   text: string;
   fromMe: boolean;
-  error?: boolean;
+  error: boolean;
 }

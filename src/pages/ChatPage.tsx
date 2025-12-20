@@ -48,6 +48,25 @@ export function ChatPage() {
   // 自動スクロール
   useAutoScroll(lastMessageRef, messages);
 
+  /**
+   * メッセージ配列に新規メッセージを追加する関数
+   * @param text メッセージテキスト
+   * @param fromMe ユーザーの送信したメッセージの場合: true
+   * @param error LLMからのエラーメッセージの場合: true
+   */
+  const appendMessage = (text: string, fromMe: boolean, error: boolean) => {
+    // メッセージ配列に新規メッセージを追加
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: prev.length + 1,
+        text,
+        fromMe,
+        error,
+      },
+    ]);
+  };
+
   // メッセージ送信イベント
   const handleSend = async (message: string) => {
     // 二重送信防止
@@ -64,6 +83,7 @@ export function ChatPage() {
           id: messages.length + 1,
           text: message,
           fromMe: true,
+          error: false,
         },
       ];
       // メッセージ配列を設定
@@ -76,33 +96,18 @@ export function ChatPage() {
       // 結果が成功の場合
       if (result.ok) {
         // 応答メッセージをメッセージ配列に追加
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: prev.length + 1,
-            text: result.value,
-            fromMe: false,
-          },
-        ]);
+        appendMessage(result.value, false, false);
       }
       // 結果がエラーの場合
       else {
         // LLMApiエラーの場合
         if (result.error.kind === LLMApiErrorTypeEnum.Http) {
-          // メッセージ配列にエラーメッセージを追加して再設定
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: prev.length + 1,
-              text: result.error.message,
-              fromMe: false,
-              error: true,
-            },
-          ]);
+          // メッセージ配列にエラーメッセージを追加
+          appendMessage(result.error.message, false, true);
         }
         // その他のエラーの場合
         else {
-          // システムエラーメッセージ設定する
+          // システムエラーメッセージ設定
           setSystemError(result.error.message);
         }
       }
