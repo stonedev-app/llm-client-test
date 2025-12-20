@@ -13,6 +13,7 @@ import { useAutoScroll } from "../hooks/useAutoScroll";
 import { Message } from "../types/Message";
 // API
 import { requestApiChat } from "../api/llm/ollama/requestApiChat";
+import { LLMApiErrorTypeEnum } from "../types/LLMApiError";
 
 /**
  * チャット画面コンポーネント
@@ -68,12 +69,43 @@ export function ChatPage() {
       // メッセージ配列を設定
       setMessages(newMessages);
       // LLMにメッセージ送信
-      await requestApiChat(
+      const result = await requestApiChat(
         selectedModel,
-        newMessages.map((msg) => ({ ...msg })),
-        setMessages,
-        setSystemError
+        newMessages.map((msg) => ({ ...msg }))
       );
+      // 結果が成功の場合
+      if (result.ok) {
+        // 応答メッセージをメッセージ配列に追加
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: prev.length + 1,
+            text: result.value,
+            fromMe: false,
+          },
+        ]);
+      }
+      // 結果がエラーの場合
+      else {
+        // LLMApiエラーの場合
+        if (result.error.kind === LLMApiErrorTypeEnum.Http) {
+          // メッセージ配列にエラーメッセージを追加して再設定
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: prev.length + 1,
+              text: result.error.message,
+              fromMe: false,
+              error: true,
+            },
+          ]);
+        }
+        // その他のエラーの場合
+        else {
+          // システムエラーメッセージ設定する
+          setSystemError(result.error.message);
+        }
+      }
     } finally {
       // メッセージ送信終了
       setIsSending(false);
