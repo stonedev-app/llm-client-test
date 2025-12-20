@@ -19,9 +19,16 @@ export interface UiMessage extends BaseMessage {
 }
 
 /**
+ * UI表示用メッセージ（下書き）
+ * @property error エラーメッセージであるか
+ */
+export interface UiMessageDraft extends BaseMessage {
+  error: boolean;
+}
+
+/**
  * API送信用メッセージ
  */
 export interface ApiMessage extends BaseMessage {
-  // ※基本情報のみ
-  // id,errorはAPI送信時には不要
+  // 基本情報のみ
 }

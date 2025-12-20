@@ -10,7 +10,7 @@ import { useModelNames } from "../hooks/useModelNames";
 import { useMessageListener } from "../hooks/useMessageListener";
 import { useAutoScroll } from "../hooks/useAutoScroll";
 // 型定義
-import { ApiMessage, UiMessage } from "../types/Message";
+import { ApiMessage, UiMessage, UiMessageDraft } from "../types/Message";
 // API
 import { requestApiChat } from "../api/llm/ollama/requestApiChat";
 import { LLMApiErrorTypeEnum } from "../types/LLMApiError";
@@ -49,20 +49,16 @@ export function ChatPage() {
   useAutoScroll(lastMessageRef, uiMessages);
 
   /**
-   * メッセージ配列に新規メッセージを追加する関数
-   * @param text メッセージテキスト
-   * @param fromMe ユーザーの送信したメッセージの場合: true
-   * @param error LLMからのエラーメッセージの場合: true
+   * UIメッセージ配列に新規メッセージを追加
+   * @param draftMsg 下書きメッセージ
    */
-  const appendMessage = (text: string, fromMe: boolean, error: boolean) => {
-    // メッセージ配列に新規メッセージを追加
+  const appendUiMessage = (draftMsg: UiMessageDraft) => {
+    // UIメッセージ配列に新規メッセージを追加
     setUiMessages((prev) => [
       ...prev,
       {
         id: prev.length + 1,
-        text,
-        fromMe,
-        error,
+        ...draftMsg,
       },
     ]);
   };
@@ -100,7 +96,7 @@ export function ChatPage() {
 
     try {
       // 送信メッセージをメッセージ配列に追加
-      appendMessage(message, true, false);
+      appendUiMessage({ text: message, fromMe: true, error: false });
       // LLMにメッセージ送信
       const result = await requestApiChat(
         selectedModel,
@@ -109,14 +105,18 @@ export function ChatPage() {
       // 結果が成功の場合
       if (result.ok) {
         // 応答メッセージをメッセージ配列に追加
-        appendMessage(result.value, false, false);
+        appendUiMessage({ text: result.value, fromMe: false, error: false });
       }
       // 結果がエラーの場合
       else {
         // LLMApiエラーの場合
         if (result.error.kind === LLMApiErrorTypeEnum.Http) {
           // メッセージ配列にエラーメッセージを追加
-          appendMessage(result.error.message, false, true);
+          appendUiMessage({
+            text: result.error.message,
+            fromMe: false,
+            error: true,
+          });
         }
         // その他のエラーの場合
         else {
