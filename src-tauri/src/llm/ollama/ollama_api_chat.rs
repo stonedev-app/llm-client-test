@@ -15,7 +15,8 @@ pub async fn ollama_api_chat(
 ) -> Result<String, LLMApiErrorDTO> {
     // 開始ログ
     log::info!(
-        "Tauri command `ollama_api_chat` started. messages: {}",
+        "Tauri command `ollama_api_chat` started. model: {}, messages: {}",
+        model,
         messages.len()
     );
 
@@ -120,7 +121,8 @@ pub async fn ollama_api_chat(
 
     // 正常終了時ログ
     log::info!(
-        "Tauri command `ollama_api_chat` finished Ok. response_length={}",
+        "Tauri command `ollama_api_chat` finished Ok. model: {}, response_length={}",
+        model,
         res_message.len()
     );
 
