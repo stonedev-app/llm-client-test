@@ -37,13 +37,23 @@ export function ChatPage() {
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   // モデル名一覧取得
-  const { modelNames } = useModelNames();
+  const { modelNames, error } = useModelNames();
+  // 選択モデルの初期化
   useEffect(() => {
-    // モデル名が存在し、かつ選択モデルが未設定の場合、最初のモデルを選択
+    // モデル名一覧が存在し、かつ選択モデルが未設定の場合
     if (modelNames.length > 0 && selectedModel === "") {
+      // モデル名一覧の最初のモデルを設定
       setSelectedModel(modelNames[0]);
     }
   }, [modelNames, selectedModel]);
+  // モデル名取得エラー処理
+  useEffect(() => {
+    // モデル名取得エラーが発生した場合
+    if (error) {
+      // システムエラーメッセージ設定
+      setSystemError(error);
+    }
+  }, [error]);
 
   // 受信中メッセージ(ストリーミングメッセージ)
   const { message: receivingMessage, reset: resetMessage } =
@@ -138,6 +148,8 @@ export function ChatPage() {
 
   // メッセージ配列が存在するか
   const hasMessages = uiMessages.length > 0;
+  // モデルが選択されているか
+  const isSelectedModel = selectedModel !== "";
 
   return (
     <Box
@@ -152,6 +164,8 @@ export function ChatPage() {
         models={modelNames}
         selectedModel={selectedModel}
         onModelChange={setSelectedModel}
+        // 送信中、もしくはモデル名が存在しない場合は選択不可
+        disabled={isSending || modelNames.length === 0}
       />
 
       {/* メインコンテンツ */}
@@ -213,7 +227,11 @@ export function ChatPage() {
             alignItems: !hasMessages ? "center" : "stretch",
           }}
         >
-          <ChatInput onSend={handleSend} isSending={isSending} />
+          <ChatInput
+            onSend={handleSend}
+            isSending={isSending}
+            isSelectedModel={isSelectedModel}
+          />
         </Box>
       </Box>
     </Box>
