@@ -39,6 +39,7 @@ export function ChatPage() {
   // モデル名一覧取得
   const { modelNames } = useModelNames();
   useEffect(() => {
+    // モデル名が存在し、かつ選択モデルが未設定の場合、最初のモデルを選択
     if (modelNames.length > 0 && selectedModel === "") {
       setSelectedModel(modelNames[0]);
     }
