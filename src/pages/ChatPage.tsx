@@ -21,6 +21,9 @@ import { LLMApiErrorTypeEnum } from "../types/LLMApiError";
  * @returns JSX要素
  */
 export function ChatPage() {
+  // 次のUIメッセージID
+  const nextUiMessageId = useRef(0);
+
   // UIメッセージ配列
   const [uiMessages, setUiMessages] = useState<UiMessage[]>([]);
   // 送信中フラグ
@@ -57,7 +60,7 @@ export function ChatPage() {
     setUiMessages((prev) => [
       ...prev,
       {
-        id: prev.length + 1,
+        id: nextUiMessageId.current++,
         ...draftMsg,
       },
     ]);
