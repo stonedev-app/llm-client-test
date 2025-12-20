@@ -1,5 +1,5 @@
 import { useEffect, RefObject } from "react";
-import { Message } from "../types/Message";
+import { UiMessage } from "../types/Message";
 
 /**
  * 自動スクロールフック
@@ -10,7 +10,7 @@ import { Message } from "../types/Message";
  */
 export function useAutoScroll(
   lastMessageRef: RefObject<HTMLDivElement | null>,
-  messages: Message[]
+  messages: UiMessage[]
 ): void {
   useEffect(() => {
     // 最後のメッセージにまでスクロール

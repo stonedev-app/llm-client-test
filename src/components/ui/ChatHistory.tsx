@@ -2,7 +2,7 @@ import { Box, Paper, Typography } from "@mui/material";
 import { open } from "@tauri-apps/plugin-shell";
 import Markdown from "react-markdown";
 
-import { Message } from "../../types/Message";
+import { UiMessage } from "../../types/Message";
 
 /**
  * チャット履歴プロパティ
@@ -12,7 +12,7 @@ import { Message } from "../../types/Message";
  * @property lastMessageRef? 最後のメッセージへの参照(※スクロールが必要な場合は設定)
  */
 interface ChatHistoryProps {
-  messages: Message[];
+  messages: UiMessage[];
   isSending: boolean;
   receivingMessage: string;
   lastMessageRef?: React.Ref<HTMLDivElement>;
@@ -46,6 +46,7 @@ export function ChatHistory({
       // 受信中メッセージを設定。未受信の場合は「入力中…」を設定
       text: receivingMessage || "入力中…",
       fromMe: false,
+      error: false,
     });
   }
 

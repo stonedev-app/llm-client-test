@@ -10,9 +10,10 @@ import { useModelNames } from "../hooks/useModelNames";
 import { useMessageListener } from "../hooks/useMessageListener";
 import { useAutoScroll } from "../hooks/useAutoScroll";
 // 型定義
-import { Message } from "../types/Message";
+import { ApiMessage, UiMessage, UiMessageDraft } from "../types/Message";
 // API
 import { requestApiChat } from "../api/llm/ollama/requestApiChat";
+import { LLMApiErrorTypeEnum } from "../types/LLMApiError";
 
 /**
  * チャット画面コンポーネント
@@ -20,8 +21,11 @@ import { requestApiChat } from "../api/llm/ollama/requestApiChat";
  * @returns JSX要素
  */
 export function ChatPage() {
-  // メッセージ配列
-  const [messages, setMessages] = useState<Message[]>([]);
+  // 次のUIメッセージID
+  const nextUiMessageId = useRef(0);
+
+  // UIメッセージ配列
+  const [uiMessages, setUiMessages] = useState<UiMessage[]>([]);
   // 送信中フラグ
   const [isSending, setIsSending] = useState(false);
   // システムエラー(ネットワークエラーなど)
@@ -35,6 +39,7 @@ export function ChatPage() {
   // モデル名一覧取得
   const { modelNames } = useModelNames();
   useEffect(() => {
+    // モデル名が存在し、かつ選択モデルが未設定の場合、最初のモデルを選択
     if (modelNames.length > 0 && selectedModel === "") {
       setSelectedModel(modelNames[0]);
     }
@@ -45,7 +50,45 @@ export function ChatPage() {
     useMessageListener();
 
   // 自動スクロール
-  useAutoScroll(lastMessageRef, messages);
+  useAutoScroll(lastMessageRef, uiMessages);
+
+  /**
+   * UIメッセージ配列に新規メッセージを追加
+   * @param draftMsg 下書きメッセージ
+   */
+  const appendUiMessage = (draftMsg: UiMessageDraft) => {
+    // UIメッセージ配列に新規メッセージを追加
+    setUiMessages((prev) => [
+      ...prev,
+      {
+        id: nextUiMessageId.current++,
+        ...draftMsg,
+      },
+    ]);
+  };
+
+  /**
+   * API用メッセージ配列を構築
+   * @param message 新規メッセージテキスト
+   * @param uiMessages UIメッセージ配列
+   * @returns APIメッセージ配列
+   */
+  const buildApiMessages = (
+    message: string,
+    uiMessages: UiMessage[]
+  ): ApiMessage[] => {
+    // UIメッセージ配列をAPIメッセージ配列に変換し、新規メッセージを追加して返す
+    return [
+      ...uiMessages.map((msg) => ({
+        text: msg.text,
+        fromMe: msg.fromMe,
+      })),
+      {
+        text: message,
+        fromMe: true,
+      },
+    ];
+  };
 
   // メッセージ送信イベント
   const handleSend = async (message: string) => {
@@ -56,24 +99,35 @@ export function ChatPage() {
     setIsSending(true);
 
     try {
-      // 新規メッセージを追加したメッセージ配列を生成
-      const newMessages: Message[] = [
-        ...messages,
-        {
-          id: messages.length + 1,
-          text: message,
-          fromMe: true,
-        },
-      ];
-      // メッセージ配列を設定
-      setMessages(newMessages);
+      // 送信メッセージをメッセージ配列に追加
+      appendUiMessage({ text: message, fromMe: true, error: false });
       // LLMにメッセージ送信
-      await requestApiChat(
+      const result = await requestApiChat(
         selectedModel,
-        newMessages.map((msg) => ({ ...msg })),
-        setMessages,
-        setSystemError
+        buildApiMessages(message, uiMessages)
       );
+      // 結果が成功の場合
+      if (result.ok) {
+        // 応答メッセージをメッセージ配列に追加
+        appendUiMessage({ text: result.value, fromMe: false, error: false });
+      }
+      // 結果がエラーの場合
+      else {
+        // LLMApiエラーの場合
+        if (result.error.kind === LLMApiErrorTypeEnum.Http) {
+          // メッセージ配列にエラーメッセージを追加
+          appendUiMessage({
+            text: result.error.message,
+            fromMe: false,
+            error: true,
+          });
+        }
+        // その他のエラーの場合
+        else {
+          // システムエラーメッセージ設定
+          setSystemError(result.error.message);
+        }
+      }
     } finally {
       // メッセージ送信終了
       setIsSending(false);
@@ -83,7 +137,7 @@ export function ChatPage() {
   };
 
   // メッセージ配列が存在するか
-  const hasMessages = messages.length > 0;
+  const hasMessages = uiMessages.length > 0;
 
   return (
     <Box
@@ -125,7 +179,7 @@ export function ChatPage() {
             }}
           >
             <ChatHistory
-              messages={messages}
+              messages={uiMessages}
               isSending={isSending}
               receivingMessage={receivingMessage}
               lastMessageRef={lastMessageRef}
