@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 
-import { Message } from "../../../types/Message";
+import { ApiMessage } from "../../../types/Message";
 import { Commands } from "../../../tauri/constants";
 import { LLMApiError, normalizeLLMApiError } from "../../../types/LLMApiError";
 import { Err, Ok, Result } from "../../../types/Result";
@@ -14,7 +14,7 @@ import { Err, Ok, Result } from "../../../types/Result";
  */
 export const requestApiChat = async (
   model: string,
-  messages: Message[]
+  messages: ApiMessage[]
 ): Promise<Result<string, LLMApiError>> => {
   try {
     // LLMリクエスト処理を呼び出す

@@ -3,12 +3,9 @@ use serde::{Deserialize, Serialize};
 /// MessageDTO
 ///
 /// フロント側から受け取るメッセージ
-#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MessageDTO {
-    /// id
-    pub id: u32,
     /// メッセージ
     pub text: String,
     /// ユーザーが送信したかどうか
@@ -30,6 +27,7 @@ pub struct LLMApiErrorDTO {
 /// LLMApiErrorType
 ///
 /// LLM API エラー種別
+#[allow(dead_code)]
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum LLMApiErrorType {
@@ -41,6 +39,8 @@ pub enum LLMApiErrorType {
     Receive,
     /// JSONパースエラー
     Parse,
+    /// 不明なエラー
+    Unknown,
 }
 
 /// llm_err
