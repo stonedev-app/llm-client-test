@@ -60,7 +60,8 @@ export function Header({
               "& .MuiOutlinedInput-notchedOutline": {
                 borderColor: "rgba(255, 255, 255, 0.5)",
               },
-              "&:hover .MuiOutlinedInput-notchedOutline": {
+              // ホバー時のスタイル(disabled時は除く)
+              "&:not(.Mui-disabled):hover .MuiOutlinedInput-notchedOutline": {
                 borderColor: "rgba(255, 255, 255, 0.7)",
               },
               "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
