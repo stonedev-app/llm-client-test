@@ -13,10 +13,12 @@ import SendIcon from "@mui/icons-material/Send";
  * チャット入力プロパティ
  * @property onSend 送信イベントハンドラ
  * @property isSending 送信中
+ * @property isSelectedModel モデルが選択されているか
  */
 interface ChatInputProps {
   onSend: (message: string) => Promise<void>;
   isSending: boolean;
+  isSelectedModel: boolean;
 }
 
 /**
@@ -25,9 +27,14 @@ interface ChatInputProps {
  * @param props チャット入力プロパティ
  * @param props.onSend 送信イベントハンドラ
  * @param props.isSending 送信中
+ * @param props.isSelectedModel モデルが選択されているか
  * @returns JSX要素
  */
-export function ChatInput({ onSend, isSending }: ChatInputProps) {
+export function ChatInput({
+  onSend,
+  isSending,
+  isSelectedModel,
+}: ChatInputProps) {
   // メッセージ
   const [message, setMessage] = useState("");
   // macOS判定フラグ
@@ -41,8 +48,8 @@ export function ChatInput({ onSend, isSending }: ChatInputProps) {
 
   // メッセージ送信イベント
   const handleSend = () => {
-    // メッセージが空の場合は処理を中断
-    if (!message.trim()) return;
+    // メッセージが空の場合、もしくはモデル未選択の場合は送信しない
+    if (!message.trim() || !isSelectedModel) return;
     // メッセージクリア
     setMessage("");
     // メッセージ送信
@@ -98,7 +105,8 @@ export function ChatInput({ onSend, isSending }: ChatInputProps) {
         {/* アイコンボタン */}
         <IconButton
           onClick={handleSend}
-          disabled={!message.trim() || isSending}
+          // メッセージが空、または送信中、またはモデル未選択の場合は無効化
+          disabled={!message.trim() || isSending || !isSelectedModel}
           sx={{
             bgcolor: "primary.main",
             color: "white",

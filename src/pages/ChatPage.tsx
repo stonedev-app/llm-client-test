@@ -148,6 +148,8 @@ export function ChatPage() {
 
   // メッセージ配列が存在するか
   const hasMessages = uiMessages.length > 0;
+  // モデルが選択されているか
+  const isSelectedModel = selectedModel !== "";
 
   return (
     <Box
@@ -225,7 +227,11 @@ export function ChatPage() {
             alignItems: !hasMessages ? "center" : "stretch",
           }}
         >
-          <ChatInput onSend={handleSend} isSending={isSending} />
+          <ChatInput
+            onSend={handleSend}
+            isSending={isSending}
+            isSelectedModel={isSelectedModel}
+          />
         </Box>
       </Box>
     </Box>
